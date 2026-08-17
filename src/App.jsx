@@ -9,6 +9,7 @@ function App() {
   function handleSubmit(event) {
     event.preventDefault()
     const transaction = {
+      id: Date.now(),
       type,
       amount: Number(amount),
       category,
@@ -67,6 +68,16 @@ function App() {
           Add Transaction
         </button>
       </form>
+
+      <h2>Transactions</h2>
+
+      {transactions.map((transaction) => (
+        <div key={transaction.id}>
+          <p>{transaction.category}</p>
+          <p>{transaction.description}</p>
+          <p>${transaction.amount}</p>
+        </div>
+      ))}
     </div>
   )
 }
