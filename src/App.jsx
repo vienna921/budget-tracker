@@ -1,10 +1,21 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 function App() {
+  console.log("App loaded")
   const [type, setType] = useState("expense")
   const [amount, setAmount] = useState("")
   const [category, setCategory] = useState("")
   const [description, setDescription] = useState("")
   const [transactions, setTransactions] = useState([])
+
+  // do this when component loads or renders
+  useEffect(() => {
+    //make http requests
+    fetch("http://localhost:3000/api/transactions")
+    .then((response) => response.json())
+    .then((data) => {
+      setTransactions(data)
+    })
+  }, [])
 
   function handleSubmit(event) {
     event.preventDefault()
