@@ -39,6 +39,11 @@ function App() {
       .then((response) => response.json())
       .then((newTransaction) => {
         setTransactions([...transactions, newTransaction])
+
+        setAmount("")
+        setCategory("")
+        setDescription("")
+        setType("expense")
       })
     console.log(transaction)
   }
@@ -56,13 +61,29 @@ function App() {
         )
       })
   }
+  
+  const totalIncome = transactions
+    // filter only income transactions
+    .filter((transaction) => transaction.type === "income")
+    // sum
+    .reduce((total, transaction) => total + transaction.amount, 0)
+  
+  const totalExpenses = transactions
+    .filter((transaction) => transaction.type === "expense")
+    .reduce((total, transaction) => total + transaction.amount, 0)
+
+  const balance = totalIncome - totalExpenses
 
   return (
     <div>
       <h1>Budget Tracker</h1>
       <p>Amount: {amount}</p>
       <h2>Add Transaction</h2>
-      
+
+      <h2>Balance: ${balance}</h2>
+      <p>Income: ${totalIncome}</p>
+      <p>Expenses: ${totalExpenses}</p>
+
       <form onSubmit={handleSubmit}>
         <label>
           Type
