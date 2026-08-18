@@ -4,6 +4,8 @@ const cors = require("cors")
 const app = express()
 
 app.use(cors())
+// if request has JSON data, parse, so I can access
+app.use(express.json())
 
 const PORT = 3000
 
@@ -28,7 +30,18 @@ app.get("/", (req, res) => {
     res.send("Budget Tracker API is running!")
 })
 app.get("/api/transactions", (req, res) => {
+    // send transactions back to requester as JSON
     res.json(transactions)
+})
+app.post("/api/transactions", (req,res) => {
+    // req.body - data React sends
+    const transaction ={
+        id: Date.now(),
+        ...req.body
+    }
+    transactions.push(transaction)
+
+    res.json(transaction)
 })
 
 app.listen(PORT, () => {

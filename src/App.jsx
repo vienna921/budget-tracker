@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 function App() {
   console.log("App loaded")
+
   const [type, setType] = useState("expense")
   const [amount, setAmount] = useState("")
   const [category, setCategory] = useState("")
@@ -11,22 +12,34 @@ function App() {
   useEffect(() => {
     //make http requests
     fetch("http://localhost:3000/api/transactions")
+    // response.json() - React turn that response to JavaScript data
     .then((response) => response.json())
     .then((data) => {
       setTransactions(data)
     })
+  // [] - run this effect after component's initial render 
+  // instead of every after render
   }, [])
 
   function handleSubmit(event) {
     event.preventDefault()
     const transaction = {
-      id: Date.now(),
       type,
       amount: Number(amount),
       category,
       description
     }
-    setTransactions([...transactions, transaction])
+    fetch("http://localhost:3000/api/transactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(transaction)
+    })
+      .then((response) => response.json())
+      .then((newTransaction) => {
+        setTransactions([...transactions, newTransaction])
+      })
     console.log(transaction)
   }
 
