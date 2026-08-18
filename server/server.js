@@ -58,6 +58,23 @@ app.post("/api/transactions", (req,res) => {
 
     res.json(transaction)
 })
+app.delete("/api/transactions/:id", (req, res) => {
+    const id = Number(req.params.id)
+
+    const transactionIndex = transactions.findIndex(
+        (transaction) => transaction.id === id
+    )
+
+    if (transactionIndex === -1) {
+        return res.status(404).json({
+            error: "Transaction not found"
+        })
+    }
+
+    const deletedTransaction = transactions.splice(transactionIndex, 1)
+
+    res.json(deletedTransaction[0])
+})
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`)

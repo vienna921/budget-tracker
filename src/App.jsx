@@ -43,6 +43,20 @@ function App() {
     console.log(transaction)
   }
 
+  function handleDelete(id) {
+    fetch(`http://localhost:3000/api/transactions/${id}`, {
+      method: "DELETE"
+    })
+      .then((response) => response.json())
+      .then((deletedTransaction) => {
+        setTransactions(
+          transactions.filter(
+            (transaction) => transaction.id !== deletedTransaction.id
+          )
+        )
+      })
+  }
+
   return (
     <div>
       <h1>Budget Tracker</h1>
@@ -100,6 +114,10 @@ function App() {
           <p>{transaction.category}</p>
           <p>{transaction.description}</p>
           <p>${transaction.amount}</p>
+
+          <button onClick={() => handleDelete(transaction.id)}>
+            Delete
+          </button>
         </div>
       ))}
     </div>
