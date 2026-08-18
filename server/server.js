@@ -34,6 +34,21 @@ app.get("/api/transactions", (req, res) => {
     res.json(transactions)
 })
 app.post("/api/transactions", (req,res) => {
+    if (req.body.type !== "income" && req.body.type !== "expense") {
+        return res.status(400).json({ 
+            error: "Invalid transaction type" 
+        })
+    }
+    if (typeof req.body.amount !== "number" || req.body.amount <= 0) {
+        return res.status(400).json({ 
+            error: "Amount must be a positive number" 
+        })
+    }
+    if (!req.body.category || !req.body.description) {
+        return res.status(400).json({
+            error: "Category and description are required"
+        })
+    }
     // req.body - data React sends
     const transaction ={
         id: Date.now(),
