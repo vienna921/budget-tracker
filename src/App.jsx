@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import Dashboard from "./Dashboard"
 import TransactionForm from './TransactionForm'
+import TransactionItem from "./TransactionItem"
+import EditTransactionForm from './EditTransactionForm'
 
 
 function App() {
@@ -9,10 +11,6 @@ function App() {
  
   const [transactions, setTransactions] = useState([])
   const [editingId, setEditingId] = useState(null)
-  const [editAmount, setEditAmount] = useState("")
-  const [editCategory, setEditCategory] = useState("")
-  const [editDescription, setEditDescription] = useState("")
-  const [editType, setEditType] = useState("expense")
 
 
   // do this when component loads or renders
@@ -63,28 +61,19 @@ function App() {
 
   function handleEdit(transaction) {
     setEditingId(transaction.id)
-    setEditAmount(transaction.amount)
-    setEditCategory(transaction.category)
-    setEditDescription(transaction.description)
-    setEditType(transaction.type)
   }
 
   function handleCancelEdit() {
     setEditingId(null)
   }
 
-  function handleSaveEdit() {
+  function handleSaveEdit(updatedFields) {
     fetch(`http://localhost:3000/api/transactions/${editingId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        amount: Number(editAmount),
-        category: editCategory,
-        description: editDescription,
-        type: editType
-      })
+      body: JSON.stringify(updatedFields)
     })
       .then((response) => response.json())
       .then((updatedTransaction) => {
@@ -117,8 +106,7 @@ function App() {
   
 
       <TransactionForm 
-        onSubmit={handleSubmit} 
-        onSuccess={() => {}}
+        onSubmit={handleSubmit}
       />
 
       <Dashboard
@@ -133,51 +121,18 @@ function App() {
       {transactions.map((transaction) => (
         <div key={transaction.id}>
           {editingId === transaction.id ? (
-            // EDIT FROM
-            <div>
-              <input
-                type="number"
-                value={editAmount}
-                onChange={(event) => setEditAmount(event.target.value)}
-              />
-              <input
-                type="text"
-                value={editCategory}
-                onChange={(event) => setEditCategory(event.target.value)}
-              />
-              <input
-                type="text"
-                value={editDescription}
-                onChange={(event) => setEditDescription(event.target.value)}
-              />
-              <select
-                value={editType}
-                onChange={(event) => setEditType(event.target.value)}
-              >
-                <option value="expense">Expense</option>
-                <option value="income">Income</option>
-              </select>
-
-              <button onClick={handleSaveEdit}>Save</button>
-              <button onClick={handleCancelEdit}>Cancel</button>
-            </div>
-
+            <EditTransactionForm
+              transaction={transaction}
+              onSave={handleSaveEdit}
+              onCancel={handleCancelEdit}
+            />
           ) : (
-            <>
-              <p>{transaction.category}</p>
-              <p>{transaction.description}</p>
-              <p>${transaction.amount}</p>
-
-              <button onClick={() => handleEdit(transaction)}>
-                Edit
-              </button>
-
-              <button onClick={() => handleDelete(transaction.id)}>
-                Delete
-              </button>
-            </>
+            <TransactionItem
+              transaction={transaction}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           )}
-          
         </div>
       ))}
     </div>
