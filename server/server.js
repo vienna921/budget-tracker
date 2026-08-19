@@ -29,10 +29,14 @@ const transactions = [
 app.get("/", (req, res) => {
     res.send("Budget Tracker API is running!")
 })
+
+
 app.get("/api/transactions", (req, res) => {
     // send transactions back to requester as JSON
     res.json(transactions)
 })
+
+
 app.post("/api/transactions", (req,res) => {
     if (req.body.type !== "income" && req.body.type !== "expense") {
         return res.status(400).json({ 
@@ -58,6 +62,8 @@ app.post("/api/transactions", (req,res) => {
 
     res.json(transaction)
 })
+
+
 app.delete("/api/transactions/:id", (req, res) => {
     const id = Number(req.params.id)
 
@@ -76,6 +82,30 @@ app.delete("/api/transactions/:id", (req, res) => {
     res.json(deletedTransaction[0])
 })
 
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`)
+})
+
+app.patch("/api/transactions/:id", (req, res) => {
+    // get id
+    const id = Number(req.params.id)
+    // find transaction
+    const transactionIndex = transactions.findIndex(
+        (transaction) => transaction.id === id
+    )
+    if (transactionIndex === -1) {
+        return res.status(404).json({
+            error: "Transaction not found"
+        })
+    }
+    // update transaction
+    transactions[transactionIndex] = {
+        // copies existing transaction
+        ...transactions[transactionIndex],
+        // copies new values on top of it
+        ...req.body
+    }
+    // send it back
+    res.json(transactions[transactionIndex])
 })

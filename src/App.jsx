@@ -62,6 +62,31 @@ function App() {
       })
   }
   
+
+  function handleEdit(id) {
+    fetch(`http://localhost:3000/api/transactions/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        amount: 30
+      })
+    })
+      .then((response) => response.json())
+      .then((updatedTransaction) => {
+        setTransactions(
+          // create a new array
+          transactions.map((transaction) =>
+            transaction.id === updatedTransaction.id
+              ? updatedTransaction
+              : transaction
+          )
+        )
+      })
+  }
+
+
   const totalIncome = transactions
     // filter only income transactions
     .filter((transaction) => transaction.type === "income")
@@ -80,9 +105,20 @@ function App() {
       <p>Amount: {amount}</p>
       <h2>Add Transaction</h2>
 
-      <h2>Balance: ${balance}</h2>
-      <p>Income: ${totalIncome}</p>
-      <p>Expenses: ${totalExpenses}</p>
+
+      <div>
+        <h3>Balance</h3>
+        <p>${balance.toFixed(2)}</p>
+      </div>
+      <div>
+        <h3>Income</h3>
+        <p>${totalIncome.toFixed(2)}</p>
+      </div>
+      <div>
+        <h3>Expenses</h3>
+        <p>${totalExpenses.toFixed(2)}</p>
+      </div>
+  
 
       <form onSubmit={handleSubmit}>
         <label>
@@ -135,6 +171,10 @@ function App() {
           <p>{transaction.category}</p>
           <p>{transaction.description}</p>
           <p>${transaction.amount}</p>
+
+          <button onClick={() => handleEdit(transaction.id)}>
+            Edit
+          </button>
 
           <button onClick={() => handleDelete(transaction.id)}>
             Delete
