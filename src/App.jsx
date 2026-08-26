@@ -7,20 +7,32 @@ import EditTransactionForm from './EditTransactionForm'
 
 function App() {
   console.log("App loaded")
-
- 
   const [transactions, setTransactions] = useState([])
   const [editingId, setEditingId] = useState(null)
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(true)
 
-
+// GET request
   // do this when component loads or renders
   useEffect(() => {
     //make http requests
     fetch("http://localhost:3000/api/transactions")
     // response.json() - React turn that response to JavaScript data
-    .then((response) => response.json())
+    .then((response) => {
+      // error handling
+      if (!response.ok) {
+        throw new Error("Failed to load transactions")
+      }
+      return response.json()
+    })
     .then((data) => {
       setTransactions(data)
+    })
+    .catch((error) => {
+      setError(error.message)
+    })
+    .finally(() => {
+      setLoading(false)
     })
   // [] - run this effect after component's initial render 
   // instead of every after render
@@ -37,7 +49,15 @@ function App() {
         amount: Number(transaction.amount)
       })
     })
-      .then((response) => response.json())
+      .then((response) => {
+        // don't add anything to transactions if Express says 400
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            throw new Error(errorData.error)
+          })
+        }
+        return response.json()
+      })
       .then((newTransaction) => {
         setTransactions([...transactions, newTransaction])
         return newTransaction
@@ -103,10 +123,12 @@ function App() {
   return (
     <div>
       <h1>Budget Tracker</h1>
-  
+      {loading && <p>Loading...</p>}
+      {error && <p>{error}</p>}
 
       <TransactionForm 
         onSubmit={handleSubmit}
+        onError={setError}
       />
 
       <Dashboard

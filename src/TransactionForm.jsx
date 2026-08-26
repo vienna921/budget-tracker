@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 
-function TransactionForm({ onSubmit }) {
+function TransactionForm({ onSubmit, onError }) {
     const [type, setType] = useState("expense")
     const [amount, setAmount] = useState("")
     const [category, setCategory] = useState("")
@@ -19,12 +19,16 @@ function TransactionForm({ onSubmit }) {
                     amount,
                     category,
                     description
-                }).then(() => {
+                })
+                .then(() => {
                     setAmount("")
                     setCategory("")
                     setDescription("")
                     setType("expense")
                 }) 
+                .catch((error) => {
+                    onError(error.message)
+                })
             }}>
                 <label>
                 Type
