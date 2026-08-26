@@ -14,6 +14,16 @@ function TransactionForm({ onSubmit, onError }) {
             <form onSubmit={(event) => {
                 event.preventDefault()
 
+                if (!amount || Number(amount) <= 0) {
+                    onError("Amount must be greater than 0")
+                    return
+                }
+                // .trim() removes spaces from beginning and end
+                if (!category.trim()) {
+                    onError("Category is required")
+                    return
+                }
+
                 onSubmit({
                     type,
                     amount,
@@ -25,6 +35,7 @@ function TransactionForm({ onSubmit, onError }) {
                     setCategory("")
                     setDescription("")
                     setType("expense")
+                    onError("")
                 }) 
                 .catch((error) => {
                     onError(error.message)
