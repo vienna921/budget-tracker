@@ -1,5 +1,6 @@
 const express = require("express")
 const cors = require("cors")
+const db = require("./database")
 
 const app = express()
 
@@ -9,22 +10,6 @@ app.use(express.json())
 
 const PORT = 3000
 
-const transactions = [
-    {
-        id: 1,
-        type: "expense",
-        amount: 25,
-        category: "Food",
-        description: "Lunch"
-    },
-    {
-        id: 2,
-        type: "income",
-        amount: 1000,
-        category: "Salary",
-        description: "Paycheck"
-    }
-]
 
 app.get("/", (req, res) => {
     res.send("Budget Tracker API is running!")
@@ -32,6 +17,12 @@ app.get("/", (req, res) => {
 
 
 app.get("/api/transactions", (req, res) => {
+    // prepare this SQL query
+    const transactions = db.prepare(
+        // give all columns and rows from transactions table
+        "SELECT * FROM transactions"
+    // execute query and give me results
+    ).all()
     // send transactions back to requester as JSON
     res.json(transactions)
 })
@@ -53,33 +44,49 @@ app.post("/api/transactions", (req,res) => {
             error: "Category and description are required"
         })
     }
-    // req.body - data React sends
-    const transaction ={
-        id: Date.now(),
-        ...req.body
-    }
-    transactions.push(transaction)
+    
+    const result = db.prepare(`
+        INSERT INTO transactions
+        (type, amount, category, description)
+        VALUES (?, ?, ?, ?)
+    `).run(
+        // fills in ? placeeholders
+        req.body.type,
+        req.body.amount,
+        req.body.category,
+        req.body.description
+    )
 
-    res.json(transaction)
+    const newTransaction = db.prepare(
+        "SELECT * FROM transactions WHERE id = ?"
+        // gives us ID that SQLite just generated
+    ).get(result.lastInsertRowid)
+
+
+    res.json(newTransaction)
 })
 
 
 app.delete("/api/transactions/:id", (req, res) => {
     const id = Number(req.params.id)
 
-    const transactionIndex = transactions.findIndex(
-        (transaction) => transaction.id === id
-    )
+    const transaction = db.prepare(
+        // find transaction before deleting it
+        "SELECT * FROM transactions WHERE id = ?"
+    ).get(id)
 
-    if (transactionIndex === -1) {
+    if (!transaction) {
         return res.status(404).json({
             error: "Transaction not found"
         })
     }
 
-    const deletedTransaction = transactions.splice(transactionIndex, 1)
-
-    res.json(deletedTransaction[0])
+    db.prepare(
+        // delete transaction whose ID matches the given from SQLite
+        "DELETE FROM transactions WHERE id = ?"
+    ).run(id)
+    // sends deleted transaction back to React
+    res.json(transaction)
 })
 
 
@@ -90,22 +97,31 @@ app.listen(PORT, () => {
 app.patch("/api/transactions/:id", (req, res) => {
     // get id
     const id = Number(req.params.id)
-    // find transaction
-    const transactionIndex = transactions.findIndex(
-        (transaction) => transaction.id === id
-    )
-    if (transactionIndex === -1) {
+    const transaction = db.prepare(
+        "SELECT * FROM transactions WHERE id = ?"
+    ).get(id)
+
+    if (!transaction) {
         return res.status(404).json({
             error: "Transaction not found"
         })
     }
-    // update transaction
-    transactions[transactionIndex] = {
-        // copies existing transaction
-        ...transactions[transactionIndex],
-        // copies new values on top of it
-        ...req.body
-    }
-    // send it back
-    res.json(transactions[transactionIndex])
+    
+    db.prepare(`
+        UPDATE transactions
+        SET type = ?, amount = ?, category = ?, description = ?
+        WHERE id = ?
+    `).run(
+        req.body.type,
+        req.body.amount,
+        req.body.category,
+        req.body.description,
+        id
+    )
+
+    const updatedTransaction = db.prepare(
+        "SELECT * FROM transactions WHERE id = ?"
+    ).get(id)
+
+    res.json(updatedTransaction)
 })
