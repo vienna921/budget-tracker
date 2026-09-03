@@ -135,6 +135,7 @@ function App() {
         totalIncome={totalIncome}
         totalExpenses={totalExpenses}
         balance={balance}
+        transactions={transactions}
       />
 
 
