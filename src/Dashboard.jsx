@@ -13,20 +13,24 @@ function Dashboard({ totalIncome, totalExpenses, balance, transactions }) {
     }, {})
     return (
         <div>
-            <div>
-                <h3>Balance</h3>
-                <p>${balance.toFixed(2)}</p>
+            <div className="dashboard">
+                <div className="dashboard-card">
+                    <h3>Balance</h3>
+                    <p>${balance.toFixed(2)}</p>
+                </div>
+
+                <div className="dashboard-card">
+                    <h3>Income</h3>
+                    <p>${totalIncome.toFixed(2)}</p>
+                </div>
+
+                <div className="dashboard-card">
+                    <h3>Expenses</h3>
+                    <p>${totalExpenses.toFixed(2)}</p>
+                </div>
             </div>
 
-            <div>
-                <h3>Income</h3>
-                <p>${totalIncome.toFixed(2)}</p>
-            </div>
-
-            <div>
-                <h3>Expenses</h3>
-                <p>${totalExpenses.toFixed(2)}</p>
-
+            <div className="category-summary">
                 <h3>Spending by Category</h3>
                 {Object.entries(spendingByCategory).map(([category, amount]) => (
                     <p key={category}>
@@ -34,8 +38,9 @@ function Dashboard({ totalIncome, totalExpenses, balance, transactions }) {
                     </p>
                 ))}
             </div>
-
         </div>
+        
+        
     )
 }
 

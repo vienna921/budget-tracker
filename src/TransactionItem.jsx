@@ -1,15 +1,21 @@
 function TransactionItem({ transaction, onEdit, onDelete }) {
     return (
-        <div>
-            <p>{transaction.category}</p>
-            <p>{transaction.description}</p>
-            <p>${transaction.amount}</p>
+        <div className={`transaction-item ${transaction.type}`}>
+            <p className="transaction-category">{transaction.category}</p>
+            <p className="transaction-description">{transaction.description}</p>
+            <p className="transaction-amount">${transaction.amount.toFixed(2)}</p>
 
-            <button onClick={() => onEdit(transaction)}>
+            <button 
+                className="edit-button"
+                onClick={() => onEdit(transaction)}
+            >
                 Edit
             </button>
 
-            <button onClick={() => onDelete(transaction.id)}>
+            <button 
+                className="delete-button"
+                onClick={() => onDelete(transaction.id)}
+            >
                 Delete
             </button>
         </div>
