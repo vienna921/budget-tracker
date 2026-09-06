@@ -8,6 +8,7 @@ import EditTransactionForm from './EditTransactionForm'
 function App() {
   console.log("App loaded")
   const [transactions, setTransactions] = useState([])
+  const [filter, setFilter] = useState("all")
   const [editingId, setEditingId] = useState(null)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(true)
@@ -108,6 +109,13 @@ function App() {
       })
   }
 
+  const filteredTransactions = transactions.filter((transaction) => {
+    if (filter === "all") {
+      return true
+    }
+
+    return transaction.type === filter
+  })
   const totalIncome = transactions
     // filter only income transactions
     .filter((transaction) => transaction.type === "income")
@@ -140,8 +148,27 @@ function App() {
 
 
       <h2>Transactions</h2>
+      <div className="filter-buttons">
+        <button 
+          className={filter === "all" ? "active-filter": ""}
+          onClick={() => setFilter("all")}>
+          All
+        </button>
+        
+        <button 
+          className={filter === "income" ? "active-filter": ""}
+          onClick={() => setFilter("income")}>
+          Income
+        </button>
+        
+        <button 
+          className={filter === "expense" ? "active-filter": ""}
+          onClick={() => setFilter("expense")}>
+          Expenses
+        </button>
+      </div>
 
-      {transactions.map((transaction) => (
+      {filteredTransactions.map((transaction) => (
         <div key={transaction.id}>
           {editingId === transaction.id ? (
             <EditTransactionForm

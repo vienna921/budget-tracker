@@ -84,3 +84,21 @@
 .delete-button {
   background-color: #ffcccc;
 }
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-buttons button {
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.filter-buttons .active-filter {
+  font-weight: bold;
+  transform: scale(1.05);
+}
