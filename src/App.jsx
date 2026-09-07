@@ -3,6 +3,7 @@ import Dashboard from "./Dashboard"
 import TransactionForm from './TransactionForm'
 import TransactionItem from "./TransactionItem"
 import EditTransactionForm from './EditTransactionForm'
+import MonthlySummary from './MonthlySummary'
 
 
 function App() {
@@ -157,6 +158,10 @@ function App() {
         transactions={transactions}
       />
 
+      <MonthlySummary
+        transactions={transactions}
+        selectedMonth={selectedMonth}
+      />
 
       <h2>Transactions</h2>
 
