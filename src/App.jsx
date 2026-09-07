@@ -111,12 +111,19 @@ function App() {
       })
   }
 
+  // keep only unique values
+  const months = [...new Set(
+    transactions
+      .filter((transaction) => transaction.date)
+      .map((transaction) => transaction.date.slice(0, 7))
+  )]
+
   const filteredTransactions = transactions.filter((transaction) => {
     return (
-      (filter === "all" || transaction.type === filter) 
-        && (transaction.category.toLowerCase().includes(search.toLowerCase())
-            || transaction.description.toLowerCase().includes(search.toLowerCase()))
-        && (selectedMonth === "" || (transaction.date && transaction.date.startsWith(selectedMonth)))
+      (filter === "all" || transaction.type === filter)
+      && (transaction.category.toLowerCase().includes(search.toLowerCase())
+        || transaction.description.toLowerCase().includes(search.toLowerCase()))
+      && (selectedMonth === "" || (transaction.date && transaction.date.startsWith(selectedMonth)))
     )
   })
 
@@ -166,9 +173,14 @@ function App() {
         onChange={(event) => setSelectedMonth(event.target.value)}
       >
         <option value="">All months</option>
-        <option value="2026-08">August 2026</option>
-        <option value="2026-07">July 2026</option>
-        <option value="2026-06">June 2026</option>
+        {months.map((month) => (
+          <option key={month} value={month}>
+            {new Date(month + "-01T00:00:00").toLocaleDateString("en-US", {
+              month: "long",
+              year: "numeric"
+            })}
+          </option>
+        ))}
       </select>
 
       <div className="filter-buttons">
