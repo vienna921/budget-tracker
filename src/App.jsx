@@ -9,34 +9,35 @@ function App() {
   console.log("App loaded")
   const [transactions, setTransactions] = useState([])
   const [filter, setFilter] = useState("all")
+  const [search, setSearch] = useState("")
   const [editingId, setEditingId] = useState(null)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(true)
 
-// GET request
+  // GET request
   // do this when component loads or renders
   useEffect(() => {
     //make http requests
     fetch("http://localhost:3000/api/transactions")
-    // response.json() - React turn that response to JavaScript data
-    .then((response) => {
-      // error handling
-      if (!response.ok) {
-        throw new Error("Failed to load transactions")
-      }
-      return response.json()
-    })
-    .then((data) => {
-      setTransactions(data)
-    })
-    .catch((error) => {
-      setError(error.message)
-    })
-    .finally(() => {
-      setLoading(false)
-    })
-  // [] - run this effect after component's initial render 
-  // instead of every after render
+      // response.json() - React turn that response to JavaScript data
+      .then((response) => {
+        // error handling
+        if (!response.ok) {
+          throw new Error("Failed to load transactions")
+        }
+        return response.json()
+      })
+      .then((data) => {
+        setTransactions(data)
+      })
+      .catch((error) => {
+        setError(error.message)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+    // [] - run this effect after component's initial render 
+    // instead of every after render
   }, [])
 
   function handleSubmit(transaction) {
@@ -78,7 +79,7 @@ function App() {
         )
       })
   }
-  
+
 
   function handleEdit(transaction) {
     setEditingId(transaction.id)
@@ -110,18 +111,19 @@ function App() {
   }
 
   const filteredTransactions = transactions.filter((transaction) => {
-    if (filter === "all") {
-      return true
-    }
-
-    return transaction.type === filter
+    return (
+      (filter === "all" || transaction.type === filter) 
+        && (transaction.category.toLowerCase().includes(search.toLowerCase())
+            || transaction.description.toLowerCase().includes(search.toLowerCase()))
+    )
   })
+
   const totalIncome = transactions
     // filter only income transactions
     .filter((transaction) => transaction.type === "income")
     // sum
     .reduce((total, transaction) => total + transaction.amount, 0)
-  
+
   const totalExpenses = transactions
     .filter((transaction) => transaction.type === "expense")
     .reduce((total, transaction) => total + transaction.amount, 0)
@@ -134,7 +136,7 @@ function App() {
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
-      <TransactionForm 
+      <TransactionForm
         onSubmit={handleSubmit}
         onError={setError}
       />
@@ -148,21 +150,30 @@ function App() {
 
 
       <h2>Transactions</h2>
+
+      <input
+        className="search-input"
+        type="text"
+        placeholder="Search transactions..."
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+      />
+
       <div className="filter-buttons">
-        <button 
-          className={filter === "all" ? "active-filter": ""}
+        <button
+          className={filter === "all" ? "active-filter" : ""}
           onClick={() => setFilter("all")}>
           All
         </button>
-        
-        <button 
-          className={filter === "income" ? "active-filter": ""}
+
+        <button
+          className={filter === "income" ? "active-filter" : ""}
           onClick={() => setFilter("income")}>
           Income
         </button>
-        
-        <button 
-          className={filter === "expense" ? "active-filter": ""}
+
+        <button
+          className={filter === "expense" ? "active-filter" : ""}
           onClick={() => setFilter("expense")}>
           Expenses
         </button>
