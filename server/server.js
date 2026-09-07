@@ -47,14 +47,15 @@ app.post("/api/transactions", (req,res) => {
     
     const result = db.prepare(`
         INSERT INTO transactions
-        (type, amount, category, description)
-        VALUES (?, ?, ?, ?)
+        (type, amount, category, description, date)
+        VALUES (?, ?, ?, ?, ?)
     `).run(
         // fills in ? placeeholders
         req.body.type,
         req.body.amount,
         req.body.category,
-        req.body.description
+        req.body.description,
+        req.body.date
     )
 
     const newTransaction = db.prepare(

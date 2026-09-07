@@ -10,6 +10,7 @@ function App() {
   const [transactions, setTransactions] = useState([])
   const [filter, setFilter] = useState("all")
   const [search, setSearch] = useState("")
+  const [selectedMonth, setSelectedMonth] = useState("")
   const [editingId, setEditingId] = useState(null)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(true)
@@ -115,6 +116,7 @@ function App() {
       (filter === "all" || transaction.type === filter) 
         && (transaction.category.toLowerCase().includes(search.toLowerCase())
             || transaction.description.toLowerCase().includes(search.toLowerCase()))
+        && (selectedMonth === "" || (transaction.date && transaction.date.startsWith(selectedMonth)))
     )
   })
 
@@ -158,6 +160,16 @@ function App() {
         value={search}
         onChange={(event) => setSearch(event.target.value)}
       />
+
+      <select
+        value={selectedMonth}
+        onChange={(event) => setSelectedMonth(event.target.value)}
+      >
+        <option value="">All months</option>
+        <option value="2026-08">August 2026</option>
+        <option value="2026-07">July 2026</option>
+        <option value="2026-06">June 2026</option>
+      </select>
 
       <div className="filter-buttons">
         <button
