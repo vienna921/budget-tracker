@@ -39,7 +39,7 @@ function TransactionForm({ onSubmit, onError }) {
                         setCategory("")
                         setDescription("")
                         setType("expense")
-                        setDate(new Date().toISOString.split("T")[0])
+                        setDate(new Date().toISOString().split("T")[0])
                         onError("")
                     })
                     .catch((error) => {
