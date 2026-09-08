@@ -126,3 +126,54 @@ app.patch("/api/transactions/:id", (req, res) => {
 
     res.json(updatedTransaction)
 })
+
+// budgets
+app.get("/api/budgets", (req, res) => {
+    const budgets = db.prepare(
+        "SELECT * FROM budgets"
+    ).all()
+
+    res.json(budgets)
+})
+
+app.post("/api/budgets", (req, res) => {
+    const { month, amount } = req.body
+    const category = req.body.category?.trim()
+
+
+    if (!month || !category) {
+        return res.status(400).json({
+            error: "Month and category are required"
+        })
+    }
+
+    if (typeof amount !== "number" || amount <= 0) {
+        return res.status(400).json({
+            error: "Budget amount must be a positive number"
+        })
+    }
+    try {
+        const result = db.prepare(`
+            INSERT INTO budgets (month, category, amount)
+            VALUES (?, ?, ?)
+        `).run(month, category, amount)
+
+        const newBudget = db.prepare(
+            "SELECT * FROM budgets WHERE id = ?"
+        ).get(result.lastInsertRowid)
+
+        res.json(newBudget)
+    } catch (error) {
+        if (error.code === "SQLITE_CONSTRAINT_UNIQUE") {
+            return res.status(409).json({
+                error: "A budget already exists for this month and category"
+            })
+        }
+        console.error(error)
+
+        res.status(500).json({
+            error: "Failed to create budget"
+        })
+    }
+
+})

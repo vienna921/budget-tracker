@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
+import "./index.css"
 import Dashboard from "./Dashboard"
 import TransactionForm from './TransactionForm'
 import TransactionItem from "./TransactionItem"
 import EditTransactionForm from './EditTransactionForm'
 import MonthlySummary from './MonthlySummary'
-
+import BudgetForm from './BudgetForm'
+import BudgetList from "./BudgetList"
 
 function App() {
   console.log("App loaded")
@@ -12,9 +14,11 @@ function App() {
   const [filter, setFilter] = useState("all")
   const [search, setSearch] = useState("")
   const [selectedMonth, setSelectedMonth] = useState("")
+  const [selectedBudgetMonth, setSelectedBudgetMonth] = useState("")
   const [editingId, setEditingId] = useState(null)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(true)
+  const [budgets, setBudgets] = useState([])
 
   // GET request
   // do this when component loads or renders
@@ -40,6 +44,14 @@ function App() {
       })
     // [] - run this effect after component's initial render 
     // instead of every after render
+  }, [])
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/budgets")
+      .then((response) => response.json())
+      .then((data) => {
+        setBudgets(data)
+      })
   }, [])
 
   function handleSubmit(transaction) {
@@ -140,6 +152,10 @@ function App() {
 
   const balance = totalIncome - totalExpenses
 
+  const budgetMonths = [...new Set(
+    budgets.map((budget) => budget.month)
+  )]
+
   return (
     <div>
       <h1>Budget Tracker</h1>
@@ -163,6 +179,37 @@ function App() {
         selectedMonth={selectedMonth}
       />
 
+      <BudgetForm 
+        onBudgetAdded={(newBudget) => {
+          setBudgets((currentBudgets) => [
+            ...currentBudgets,
+            newBudget
+          ])
+        }}
+      />
+
+      <select
+        value={selectedBudgetMonth}
+        onChange={(event) => setSelectedBudgetMonth(event.target.value)}
+      >
+        <option value="">Select a month</option>
+
+        {budgetMonths.map((month) => (
+          <option key={month} value={month}>
+            {new Date(month+ "-01T00:00:00").toLocaleDateString("en-US", {
+              month: "long",
+              year:"numeric"
+            })}
+          </option>
+        ))}
+      </select>
+
+      <BudgetList 
+        budgets={budgets.filter((budget) =>
+          budget.month === selectedBudgetMonth
+        )} 
+        transactions={transactions}
+      />
       <h2>Transactions</h2>
 
       <input

@@ -14,6 +14,16 @@ db.exec(`
     )
 `)
 
+db.exec(`
+    CREATE TABLE IF NOT EXISTS budgets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        month TEXT NOT NULL,
+        category REAL NOT NULL,
+        amount TEXT NOT NULL,
+        UNIQUE(month, category COLLATE NOCASE)
+    )
+`)
+
 // what columns currently exist in transactions table
 // database migration
 const columnExists = db.prepare(`
