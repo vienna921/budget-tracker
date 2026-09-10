@@ -83,11 +83,11 @@ app.post("/api/login", async (req, res) => {
 })
 
 app.get("/api/me", (req, res) => {
-    console.log("SESSION:", req.session)
+    const user = db.prepare(
+        "SELECT id, username FROM users WHERE id = ?"
+    ).get(req.session.userId)
 
-    res.json({
-        userId: req.session.userId
-    })
+    res.json(user)
 })
 
 
@@ -129,15 +129,16 @@ app.post("/api/transactions", (req,res) => {
     
     const result = db.prepare(`
         INSERT INTO transactions
-        (type, amount, category, description, date)
-        VALUES (?, ?, ?, ?, ?)
+        (type, amount, category, description, date, user_id)
+        VALUES (?, ?, ?, ?, ?, ?)
     `).run(
         // fills in ? placeeholders
         req.body.type,
         req.body.amount,
         req.body.category,
         req.body.description,
-        req.body.date
+        req.body.date,
+        req.session.userId
     )
 
     const newTransaction = db.prepare(

@@ -46,5 +46,17 @@ if (columnExists.count === 0) {
     `)
 }
 
+const userIdColumnExists = db.prepare(`
+    SELECT COUNT (*) AS count
+    FROM pragma_table_info('transactions')
+    WHERE name = 'user_id'
+`).get()
+if (userIdColumnExists.count === 0) {
+    db.exec(`
+        ALTER TABLE transactions
+        ADD COLUMN user_id INTEGER    
+    `)
+}
+
 // allow other backend files to use database
 module.exports = db
