@@ -5,6 +5,7 @@ import LoginForm from './components/LoginForm'
 import Dashboard from "./components/Dashboard"
 import TransactionForm from './components/TransactionForm'
 import TransactionItem from "./components/TransactionItem"
+import TransactionList from './components/TransactionList'
 import EditTransactionForm from './components/EditTransactionForm'
 import MonthlySummary from './components/MonthlySummary'
 import BudgetForm from './components/BudgetForm'
@@ -237,15 +238,6 @@ function App() {
       .map((transaction) => transaction.date.slice(0, 7))
   )]
 
-  const filteredTransactions = transactions.filter((transaction) => {
-    return (
-      (filter === "all" || transaction.type === filter)
-      && (transaction.category.toLowerCase().includes(search.toLowerCase())
-        || transaction.description.toLowerCase().includes(search.toLowerCase()))
-      && (selectedMonth === "" || (transaction.date && transaction.date.startsWith(selectedMonth)))
-    )
-  })
-
   const totalIncome = transactions
     // filter only income transactions
     .filter((transaction) => transaction.type === "income")
@@ -317,68 +309,21 @@ function App() {
         />
       )}
 
-      <h2>Transactions</h2>
-
-      <input
-        className="search-input"
-        type="text"
-        placeholder="Search transactions..."
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
+      <TransactionList
+        transactions={transactions}
+        filter={filter}
+        search={search}
+        selectedMonth={selectedMonth}
+        onSearchChange={setSearch}
+        onMonthChange={setSelectedMonth}
+        onFilterChange={setFilter}
+        months={months}
+        editingId={editingId}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onSaveEdit={handleSaveEdit}
+        onCancelEdit={handleCancelEdit}
       />
-
-      <select
-        value={selectedMonth}
-        onChange={(event) => setSelectedMonth(event.target.value)}
-      >
-        <option value="">All months</option>
-        {months.map((month) => (
-          <option key={month} value={month}>
-            {new Date(month + "-01T00:00:00").toLocaleDateString("en-US", {
-              month: "long",
-              year: "numeric"
-            })}
-          </option>
-        ))}
-      </select>
-
-      <div className="filter-buttons">
-        <button
-          className={filter === "all" ? "active-filter" : ""}
-          onClick={() => setFilter("all")}>
-          All
-        </button>
-
-        <button
-          className={filter === "income" ? "active-filter" : ""}
-          onClick={() => setFilter("income")}>
-          Income
-        </button>
-
-        <button
-          className={filter === "expense" ? "active-filter" : ""}
-          onClick={() => setFilter("expense")}>
-          Expenses
-        </button>
-      </div>
-
-      {filteredTransactions.map((transaction) => (
-        <div key={transaction.id}>
-          {editingId === transaction.id ? (
-            <EditTransactionForm
-              transaction={transaction}
-              onSave={handleSaveEdit}
-              onCancel={handleCancelEdit}
-            />
-          ) : (
-            <TransactionItem
-              transaction={transaction}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          )}
-        </div>
-      ))}
     </div>
   )
 }
