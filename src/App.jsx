@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import "./index.css"
+import SignupForm from './SignupForm'
 import Dashboard from "./Dashboard"
 import TransactionForm from './TransactionForm'
 import TransactionItem from "./TransactionItem"
@@ -19,6 +20,7 @@ function App() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(true)
   const [budgets, setBudgets] = useState([])
+
 
   // GET request
   // do this when component loads or renders
@@ -161,10 +163,13 @@ function App() {
 
   return (
     <div>
+
       <h1>Budget Tracker</h1>
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
+      <SignupForm />
+      
       <TransactionForm
         onSubmit={handleSubmit}
         onError={setError}

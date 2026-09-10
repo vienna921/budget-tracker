@@ -24,6 +24,14 @@ db.exec(`
     )
 `)
 
+db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
+    )    
+`)
+
 // what columns currently exist in transactions table
 // database migration
 const columnExists = db.prepare(`

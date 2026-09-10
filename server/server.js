@@ -1,6 +1,7 @@
 const express = require("express")
 const cors = require("cors")
 const db = require("./database")
+const bcrypt = require("bcrypt")
 
 const app = express()
 
@@ -10,6 +11,37 @@ app.use(express.json())
 
 const PORT = 3000
 
+app.post("/api/signup", async (req, res) => {
+    const { username, password } = req.body
+
+    if (!username || !password) {
+        return res.status(400).json({
+            error: "Username and password are required"
+        })
+    }
+
+    if (password.length < 6) {
+        return res.status(400).json({
+            error: "Password must be at least 6 characters"
+        })
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const insertUser = db.prepare(`
+        INSERT INTO users (username, password)
+        VALUES (?, ?)        
+    `)
+
+    try {
+        insertUser.run(username, hashedPassword)
+        res.json({ message: "Account created successfully!"})
+    } catch (error) {
+        res.status(409).json({
+            error: "Username already exists"
+        })
+    }
+})
 
 app.get("/", (req, res) => {
     res.send("Budget Tracker API is running!")
