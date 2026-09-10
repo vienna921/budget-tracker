@@ -1,4 +1,4 @@
-function BudgetList({ budgets, transactions }) {
+function BudgetList({ budgets, transactions, onDelete }) {
 
 
     return (
@@ -27,7 +27,7 @@ function BudgetList({ budgets, transactions }) {
                     const spent = budgetExpenses.reduce((total, transaction) => {
                         return total + transaction.amount
                     }, 0)
-                    
+
                     const remaining = budget.amount - spent
                     const percentage = (spent / budget.amount) * 100
                     
@@ -62,6 +62,9 @@ function BudgetList({ budgets, transactions }) {
 
                                 {warning && <p>{warning}</p>}
                             </div>
+                            <button onClick={() => onDelete(budget.id)}>
+                                Delete
+                            </button>
                         </div>
                     )
                 })}

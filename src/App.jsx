@@ -170,6 +170,21 @@ function App() {
       })
   }
 
+  function handleDeleteBudget(id) {
+    fetch(`http://localhost:3000/api/budgets/${id}`, {
+      method: "DELETE",
+      credentials: "include"
+    })
+      .then((response) => response.json())
+      .then((deletedBudget) => {
+        setBudgets((currentBudgets) =>
+          currentBudgets.filter(
+            (budget) => budget.id !== deletedBudget.id
+          )
+        )
+      })
+  }
+
   // keep only unique values
   const months = [...new Set(
     transactions
@@ -260,6 +275,7 @@ function App() {
           budget.month === selectedBudgetMonth
         )}
         transactions={transactions}
+        onDelete={handleDeleteBudget}
       />
       <h2>Transactions</h2>
 

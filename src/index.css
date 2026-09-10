@@ -128,7 +128,7 @@
 .budget-header,
 .budget-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
   align-items: center;
   column-gap: 20px;
 }
@@ -145,6 +145,7 @@
   border-bottom: 1px solid #eee;
 }
 
+
 .budget-row:last-child {
   border-bottom: none;
 }
@@ -155,7 +156,7 @@
 }
 
 .budget-progress {
-  width: 200%;
+  width: 100%;
   height: 10px;
   background-color: #eee;
   border-radius: 5px;
@@ -181,7 +182,7 @@
   background-color: red;
 }
 
-.budget-progress-contianer {
+.budget-progress-container {
   display: flex;
   flex-direction: column;
   gap: 5px;

@@ -292,3 +292,28 @@ app.post("/api/budgets", (req, res) => {
     }
 
 })
+
+app.delete("/api/budgets/:id", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            error: "You must be logged in"
+        })
+    }
+
+    const id = Number(req.params.id)
+
+    const budget = db.prepare(
+        "SELECT * FROM budgets WHERE id = ? AND user_id = ?"
+    ).get(id, req.session.userId)
+
+    if (!budget) {
+        return res.status(404).json({
+            error: "Budget not found"
+        })
+    }
+    db.prepare(
+        "DELETE FROM budgets WHERE id = ? AND user_id = ?"
+    ).run(id, req.session.userId)
+
+    res.json(budget)
+})
