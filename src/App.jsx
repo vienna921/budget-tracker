@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import "./index.css"
-import SignupForm from './SignupForm'
-import LoginForm from './LoginForm'
-import Dashboard from "./Dashboard"
-import TransactionForm from './TransactionForm'
-import TransactionItem from "./TransactionItem"
-import EditTransactionForm from './EditTransactionForm'
-import MonthlySummary from './MonthlySummary'
-import BudgetForm from './BudgetForm'
-import BudgetList from "./BudgetList"
+import SignupForm from './components/SignupForm'
+import LoginForm from './components/LoginForm'
+import Dashboard from "./components/Dashboard"
+import TransactionForm from './components/TransactionForm'
+import TransactionItem from "./components/TransactionItem"
+import EditTransactionForm from './components/EditTransactionForm'
+import MonthlySummary from './components/MonthlySummary'
+import BudgetForm from './components/BudgetForm'
+import BudgetList from "./components/BudgetList"
+import EditBudgetForm from "./components/EditBudgetForm"
 
 function App() {
   console.log("App loaded")
@@ -93,6 +94,19 @@ function App() {
 
   function handleLogin(user) {
     setUser(user)
+  }
+
+  function handleLogout() {
+    fetch("http://localhost:3000/api/logout", {
+      method: "POST",
+      credentials: "include"
+    })
+      .then((response) => response.json())
+      .then(() => {
+        setUser(null)
+        setTransactions([])
+        setBudgets([])
+      })
   }
 
   function handleSubmit(transaction) {
@@ -190,17 +204,17 @@ function App() {
     setEditingBudget(budget)
   }
 
-  function handleSaveBudget() {
-    fetch(`http://localhost:3000/api/budgets/${editingBudget.id}`, {
+  function handleSaveBudget(updatedBudget) {
+    fetch(`http://localhost:3000/api/budgets/${updatedBudget.id}`, {
       method: "PATCH",
       credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        month: editingBudget.month,
-        category: editingBudget.category,
-        amount: editingBudget.amount
+        month: updatedBudget.month,
+        category: updatedBudget.category,
+        amount: updatedBudget.amount
       })
     })
       .then((response) => response.json())
@@ -253,6 +267,11 @@ function App() {
 
       <h1>Budget Tracker</h1>
       {user && <p>Welcome, {user.username}!</p>}
+      {user && (
+        <button onClick={handleLogout}>
+          Logout
+        </button>
+      )}
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
@@ -285,6 +304,13 @@ function App() {
         }}
       />
 
+      {editingBudget && (
+        <EditBudgetForm 
+          budget={editingBudget}
+          onSave={handleSaveBudget}
+        />
+      )}
+
       <select
         value={selectedBudgetMonth}
         onChange={(event) => setSelectedBudgetMonth(event.target.value)}
@@ -301,44 +327,7 @@ function App() {
         ))}
       </select>
 
-      {editingBudget && (
-        <div>
-          <input
-            type="month"
-            value={editingBudget.month}
-            onChange={(event) =>
-              setEditingBudget({
-                ...editingBudget,
-                month: event.target.value
-              })
-            }
-          />
-
-          <input
-            type="text"
-            value={editingBudget.category}
-            onChange={(event) =>
-              setEditingBudget({
-                ...editingBudget,
-                category: event.target.value
-              })
-            }
-          />
-
-          <input
-            type="text"
-            value={editingBudget.amount}
-            onChange={(event) =>
-              setEditingBudget({
-                ...editingBudget,
-                amount: Number(event.target.value)
-              })
-            }
-          />
-
-          <button onClick={handleSaveBudget}>Save</button>
-        </div>
-      )}
+      
 
       <BudgetList
         budgets={budgets.filter((budget) =>

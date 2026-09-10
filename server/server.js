@@ -90,6 +90,19 @@ app.get("/api/me", (req, res) => {
     res.json(user)
 })
 
+app.post("/api/logout", (req, res) => {
+    req.session.destroy((error) => {
+        if (error) {
+            return res.status(500).json({
+                error: "Failed to log out"
+            })
+        }
+
+        res.json({
+            message: "Logged out successfully"
+        })
+    })
+})
 
 
 
