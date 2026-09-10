@@ -17,7 +17,7 @@ function App() {
   const [filter, setFilter] = useState("all")
   const [search, setSearch] = useState("")
   const [selectedMonth, setSelectedMonth] = useState("")
-  const [selectedBudgetMonth, setSelectedBudgetMonth] = useState("")
+  const [selectedBudgetMonth, setSelectedBudgetMonth] = useState(new Date().toISOString().slice(0, 7))
   const [editingBudget, setEditingBudget] = useState(null)
   const [editingId, setEditingId] = useState(null)
   const [error, setError] = useState("")
@@ -258,9 +258,6 @@ function App() {
 
   const balance = totalIncome - totalExpenses
 
-  const budgetMonths = [...new Set(
-    budgets.map((budget) => budget.month)
-  )]
 
   return (
     <div>
@@ -304,39 +301,22 @@ function App() {
         }}
       />
 
-      {editingBudget && (
+      <BudgetList
+        budgets={budgets}
+        transactions={transactions}
+        onDelete={handleDeleteBudget}
+        onEdit={handleEditBudget}
+        selectedMonth={selectedBudgetMonth}
+        onMonthChange={setSelectedBudgetMonth}
+      />
+
+       {editingBudget && (
         <EditBudgetForm 
           budget={editingBudget}
           onSave={handleSaveBudget}
         />
       )}
 
-      <select
-        value={selectedBudgetMonth}
-        onChange={(event) => setSelectedBudgetMonth(event.target.value)}
-      >
-        <option value="">Select a month</option>
-
-        {budgetMonths.map((month) => (
-          <option key={month} value={month}>
-            {new Date(month + "-01T00:00:00").toLocaleDateString("en-US", {
-              month: "long",
-              year: "numeric"
-            })}
-          </option>
-        ))}
-      </select>
-
-      
-
-      <BudgetList
-        budgets={budgets.filter((budget) =>
-          budget.month === selectedBudgetMonth
-        )}
-        transactions={transactions}
-        onDelete={handleDeleteBudget}
-        onEdit={handleEditBudget}
-      />
       <h2>Transactions</h2>
 
       <input
