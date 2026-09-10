@@ -20,7 +20,8 @@ db.exec(`
         month TEXT NOT NULL,
         category REAL NOT NULL,
         amount TEXT NOT NULL,
-        UNIQUE(month, category COLLATE NOCASE)
+        user_id INTEGER,
+        UNIQUE(user_id, month, category COLLATE NOCASE)
     )
 `)
 
