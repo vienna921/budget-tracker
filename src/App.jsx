@@ -4,9 +4,7 @@ import SignupForm from './components/SignupForm'
 import LoginForm from './components/LoginForm'
 import Dashboard from "./components/Dashboard"
 import TransactionForm from './components/TransactionForm'
-import TransactionItem from "./components/TransactionItem"
 import TransactionList from './components/TransactionList'
-import EditTransactionForm from './components/EditTransactionForm'
 import MonthlySummary from './components/MonthlySummary'
 import BudgetForm from './components/BudgetForm'
 import BudgetList from "./components/BudgetList"
@@ -49,6 +47,10 @@ function App() {
   // GET request
   // do this when component loads or renders
   useEffect(() => {
+    if (!user) {
+      setLoading(false)
+      return
+    }
     setError("")
     //make http requests
     fetch("http://localhost:3000/api/transactions", {
@@ -264,8 +266,12 @@ function App() {
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
-      <LoginForm onLogin={handleLogin} />
-      <SignupForm />
+      {!user && (
+        <>
+          <LoginForm onLogin={handleLogin} />
+          <SignupForm />
+        </>
+      )}
 
       <TransactionForm
         onSubmit={handleSubmit}
