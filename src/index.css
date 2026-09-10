@@ -169,8 +169,21 @@
   transition: width 0.3s ease;
 }
 
+.warning-budget {
+  background-color: orange;
+}
+
+.almost-budget {
+  background-color: darkorange;
+}
+
+.over-budget {
+  background-color: red;
+}
+
 .budget-progress-contianer {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
+

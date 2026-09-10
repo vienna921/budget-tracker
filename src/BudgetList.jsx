@@ -1,4 +1,6 @@
 function BudgetList({ budgets, transactions }) {
+
+
     return (
         <div className="budget-list">
             <h2>Your Budgets</h2>
@@ -12,10 +14,11 @@ function BudgetList({ budgets, transactions }) {
             </div>
             
                 {budgets.map((budget) => {
+
                     const budgetExpenses = transactions.filter((transaction) => {
                         return (
                             transaction.type === "expense"
-                            && transaction.category.toLowerCase() === budget.category.toLowerCase()
+                            && transaction.category?.toLowerCase() === budget.category.toLowerCase()
                             && transaction.date
                             && transaction.date.startsWith(budget.month)
                         )
@@ -24,17 +27,21 @@ function BudgetList({ budgets, transactions }) {
                     const spent = budgetExpenses.reduce((total, transaction) => {
                         return total + transaction.amount
                     }, 0)
-
+                    
                     const remaining = budget.amount - spent
                     const percentage = (spent / budget.amount) * 100
                     
                     let warning = ""
+                    let progressClass = ""
                     if (percentage >= 100) {
                         warning = "You've gone over your budget!"
+                        progressClass = "over-budget"
                     } else if (percentage >= 90) {
                         warning = "You've almost reached your budget!"
+                        progressClass = "almost-budget"
                     } else if (percentage >= 75) {
                         warning = "You're getting close to your budget."
+                        progressClass = "warning-budget"
                     }
 
                     return (
@@ -48,7 +55,7 @@ function BudgetList({ budgets, transactions }) {
 
                                 <div className="budget-progress">
                                     <div 
-                                        className="budget-progress-bar"
+                                        className={`budget-progress-bar ${progressClass}`}
                                         style={{ width: `${Math.min(percentage, 100)}%`}}
                                     ></div>
                                 </div>

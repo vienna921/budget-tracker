@@ -75,7 +75,10 @@ function App() {
         return response.json()
       })
       .then((newTransaction) => {
-        setTransactions([...transactions, newTransaction])
+        setTransactions((currentTransactions) => [
+          ...currentTransactions,
+          newTransaction
+        ])
         return newTransaction
       })
   }
