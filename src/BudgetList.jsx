@@ -1,4 +1,4 @@
-function BudgetList({ budgets, transactions, onDelete }) {
+function BudgetList({ budgets, transactions, onDelete, onEdit }) {
 
 
     return (
@@ -62,6 +62,9 @@ function BudgetList({ budgets, transactions, onDelete }) {
 
                                 {warning && <p>{warning}</p>}
                             </div>
+                            <button onClick={() => onEdit(budget)}>
+                                Edit
+                            </button>
                             <button onClick={() => onDelete(budget.id)}>
                                 Delete
                             </button>

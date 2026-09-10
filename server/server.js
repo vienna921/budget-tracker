@@ -317,3 +317,70 @@ app.delete("/api/budgets/:id", (req, res) => {
 
     res.json(budget)
 })
+
+app.patch("/api/budgets/:id", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            error: "You must be logged in"
+        })
+    }
+
+    const id = Number(req.params.id)
+
+    const budget = db.prepare(
+        "SELECT * FROM budgets WHERE id = ? AND user_id = ?"
+    ).get(id, req.session.userId)
+
+    if (!budget) {
+        return res.status(404).json({
+            error: "Budget not found"
+        })
+    }
+
+    const  { month, amount } = req.body
+    const category = req.body.category?.trim()
+
+    if (!month || !category) {
+        return res.status(400).json({
+            error: "Month and category are required"
+        })
+    }
+
+    if (typeof amount !== "number" || amount <= 0) {
+        return res.status(400).json({
+            error: "Budget amount must be a positive number"
+        })
+    }
+
+    try {
+        db.prepare(`
+            UPDATE budgets
+            SET month = ?, category = ?, amount = ?
+            WHERE id = ? AND user_id = ?    
+        `).run(
+            month,
+            category,
+            amount,
+            id,
+            req.session.userId
+        )
+
+        const updatedBudget = db.prepare(
+            "SELECT * FROM budgets WHERE id = ? AND user_id = ?"
+        ).get(id, req.session.userId)
+
+        res.json(updatedBudget)
+    } catch (error) {
+        if (error.code === "SQLITE_CONSTRAINT_UNIQUE") {
+            return res.status(409).json({
+                error: "A budget already exists for this month and category"
+            })
+        }
+
+        console.error(error)
+
+        res.status(500).json({
+            error: "Failed to update budget"
+        })
+    }
+})

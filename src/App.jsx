@@ -17,6 +17,7 @@ function App() {
   const [search, setSearch] = useState("")
   const [selectedMonth, setSelectedMonth] = useState("")
   const [selectedBudgetMonth, setSelectedBudgetMonth] = useState("")
+  const [editingBudget, setEditingBudget] = useState(null)
   const [editingId, setEditingId] = useState(null)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(true)
@@ -185,6 +186,36 @@ function App() {
       })
   }
 
+  function handleEditBudget(budget) {
+    setEditingBudget(budget)
+  }
+
+  function handleSaveBudget() {
+    fetch(`http://localhost:3000/api/budgets/${editingBudget.id}`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        month: editingBudget.month,
+        category: editingBudget.category,
+        amount: editingBudget.amount
+      })
+    })
+      .then((response) => response.json())
+      .then((updatedBudget) => {
+        setBudgets((currentBudgets) =>
+          currentBudgets.map((budget) =>
+            budget.id === updatedBudget.id
+              ? updatedBudget
+              : budget
+          )
+        )
+        setEditingBudget(null)
+      })
+  }
+
   // keep only unique values
   const months = [...new Set(
     transactions
@@ -225,7 +256,7 @@ function App() {
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
-      <LoginForm onLogin={handleLogin}/>
+      <LoginForm onLogin={handleLogin} />
       <SignupForm />
 
       <TransactionForm
@@ -270,12 +301,52 @@ function App() {
         ))}
       </select>
 
+      {editingBudget && (
+        <div>
+          <input
+            type="month"
+            value={editingBudget.month}
+            onChange={(event) =>
+              setEditingBudget({
+                ...editingBudget,
+                month: event.target.value
+              })
+            }
+          />
+
+          <input
+            type="text"
+            value={editingBudget.category}
+            onChange={(event) =>
+              setEditingBudget({
+                ...editingBudget,
+                category: event.target.value
+              })
+            }
+          />
+
+          <input
+            type="text"
+            value={editingBudget.amount}
+            onChange={(event) =>
+              setEditingBudget({
+                ...editingBudget,
+                amount: Number(event.target.value)
+              })
+            }
+          />
+
+          <button onClick={handleSaveBudget}>Save</button>
+        </div>
+      )}
+
       <BudgetList
         budgets={budgets.filter((budget) =>
           budget.month === selectedBudgetMonth
         )}
         transactions={transactions}
         onDelete={handleDeleteBudget}
+        onEdit={handleEditBudget}
       />
       <h2>Transactions</h2>
 
