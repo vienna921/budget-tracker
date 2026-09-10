@@ -26,6 +26,16 @@ function BudgetList({ budgets, transactions }) {
                     }, 0)
 
                     const remaining = budget.amount - spent
+                    const percentage = (spent / budget.amount) * 100
+                    
+                    let warning = ""
+                    if (percentage >= 100) {
+                        warning = "You've gone over your budget!"
+                    } else if (percentage >= 90) {
+                        warning = "You've almost reached your budget!"
+                    } else if (percentage >= 75) {
+                        warning = "You're getting close to your budget."
+                    }
 
                     return (
                         <div className= "budget-row" key={budget.id}>
@@ -33,6 +43,18 @@ function BudgetList({ budgets, transactions }) {
                             <p>{budget.amount.toFixed(2)}</p>
                             <p>${spent.toFixed(2)}</p>
                             <p>${remaining.toFixed(2)}</p>
+                            <div className="budget-progress-container">
+                                <p>({percentage.toFixed(0)}% spent)</p>
+
+                                <div className="budget-progress">
+                                    <div 
+                                        className="budget-progress-bar"
+                                        style={{ width: `${Math.min(percentage, 100)}%`}}
+                                    ></div>
+                                </div>
+
+                                {warning && <p>{warning}</p>}
+                            </div>
                         </div>
                     )
                 })}
