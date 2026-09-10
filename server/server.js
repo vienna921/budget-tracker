@@ -102,15 +102,20 @@ app.get("/api/transactions", (req, res) => {
     // prepare this SQL query
     const transactions = db.prepare(
         // give all columns and rows from transactions table
-        "SELECT * FROM transactions"
+        "SELECT * FROM transactions WHERE user_id = ?"
     // execute query and give me results
-    ).all()
+    ).all(req.session.userId)
     // send transactions back to requester as JSON
     res.json(transactions)
 })
 
 
 app.post("/api/transactions", (req,res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            error: "You must be logged in"
+        })
+    }
     if (req.body.type !== "income" && req.body.type !== "expense") {
         return res.status(400).json({ 
             error: "Invalid transaction type" 
