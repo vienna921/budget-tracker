@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-function LoginForm() {
+function LoginForm({ onLogin }) {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [message, setMessage] = useState("")
@@ -29,6 +29,13 @@ function LoginForm() {
         })
         .then((data) => {
             setMessage(data.message)
+            return fetch("http://localhost:3000/api/me", {
+                credentials: "include"
+            })
+        })
+        .then((response) => response.json())
+        .then((user) => {
+            onLogin(user)
         })
         .catch((error) => {
             setMessage(error.message)

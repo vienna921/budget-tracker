@@ -99,6 +99,11 @@ app.get("/", (req, res) => {
 
 
 app.get("/api/transactions", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            error: "You must be logged in"
+        })
+    }
     // prepare this SQL query
     const transactions = db.prepare(
         // give all columns and rows from transactions table

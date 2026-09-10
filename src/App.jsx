@@ -21,13 +21,36 @@ function App() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(true)
   const [budgets, setBudgets] = useState([])
+  const [user, setUser] = useState(null)
 
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/me", {
+      credentials: "include"
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Not logged in")
+        }
+        return response.json()
+      })
+      .then((data) => {
+        console.log("USER:", data)
+        setUser(data)
+      })
+      .catch(() => {
+        setUser(null)
+      })
+  }, [])
 
   // GET request
   // do this when component loads or renders
   useEffect(() => {
+    setError("")
     //make http requests
-    fetch("http://localhost:3000/api/transactions")
+    fetch("http://localhost:3000/api/transactions", {
+      credentials: "include"
+    })
       // response.json() - React turn that response to JavaScript data
       .then((response) => {
         // error handling
@@ -47,7 +70,7 @@ function App() {
       })
     // [] - run this effect after component's initial render 
     // instead of every after render
-  }, [])
+  }, [user])
 
   useEffect(() => {
     fetch("http://localhost:3000/api/budgets")
@@ -56,6 +79,10 @@ function App() {
         setBudgets(data)
       })
   }, [])
+
+  function handleLogin(user) {
+    setUser(user)
+  }
 
   function handleSubmit(transaction) {
     return fetch("http://localhost:3000/api/transactions", {
@@ -167,10 +194,11 @@ function App() {
     <div>
 
       <h1>Budget Tracker</h1>
+      {user && <p>Welcome, {user.username}!</p>}
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
-      <LoginForm />
+      <LoginForm onLogin={handleLogin}/>
       <SignupForm />
 
       <TransactionForm
@@ -190,7 +218,7 @@ function App() {
         selectedMonth={selectedMonth}
       />
 
-      <BudgetForm 
+      <BudgetForm
         onBudgetAdded={(newBudget) => {
           setBudgets((currentBudgets) => [
             ...currentBudgets,
@@ -207,18 +235,18 @@ function App() {
 
         {budgetMonths.map((month) => (
           <option key={month} value={month}>
-            {new Date(month+ "-01T00:00:00").toLocaleDateString("en-US", {
+            {new Date(month + "-01T00:00:00").toLocaleDateString("en-US", {
               month: "long",
-              year:"numeric"
+              year: "numeric"
             })}
           </option>
         ))}
       </select>
 
-      <BudgetList 
+      <BudgetList
         budgets={budgets.filter((budget) =>
           budget.month === selectedBudgetMonth
-        )} 
+        )}
         transactions={transactions}
       />
       <h2>Transactions</h2>
