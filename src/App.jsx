@@ -116,7 +116,8 @@ function App() {
 
   function handleDelete(id) {
     fetch(`http://localhost:3000/api/transactions/${id}`, {
-      method: "DELETE"
+      method: "DELETE",
+      credentials: "include"
     })
       .then((response) => response.json())
       .then((deletedTransaction) => {

@@ -164,10 +164,16 @@ app.post("/api/transactions", (req,res) => {
 app.delete("/api/transactions/:id", (req, res) => {
     const id = Number(req.params.id)
 
+    if (!req.session.userId) {
+        return res.status(401).json({
+            error: "You must be logged in"
+        })
+    }
+
     const transaction = db.prepare(
         // find transaction before deleting it
-        "SELECT * FROM transactions WHERE id = ?"
-    ).get(id)
+        "SELECT * FROM transactions WHERE id = ? AND user_id = ?"
+    ).get(id, req.session.userId)
 
     if (!transaction) {
         return res.status(404).json({
@@ -177,8 +183,8 @@ app.delete("/api/transactions/:id", (req, res) => {
 
     db.prepare(
         // delete transaction whose ID matches the given from SQLite
-        "DELETE FROM transactions WHERE id = ?"
-    ).run(id)
+        "DELETE FROM transactions WHERE id = ? AND user_id = ?"
+    ).run(id, req.session.userId)
     // sends deleted transaction back to React
     res.json(transaction)
 })
