@@ -23,6 +23,7 @@ function BudgetForm({ onBudgetAdded }) {
 
         fetch("http://localhost:3000/api/budgets", {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json"
             },

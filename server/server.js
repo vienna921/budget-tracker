@@ -107,7 +107,7 @@ app.get("/api/transactions", (req, res) => {
     // prepare this SQL query
     const transactions = db.prepare(
         // give all columns and rows from transactions table
-        "SELECT * FROM transactions WHERE user_id = ?"
+        "SELECT * FROM transactions WHERE user_id = ?" 
     // execute query and give me results
     ).all(req.session.userId)
     // send transactions back to requester as JSON
@@ -195,11 +195,16 @@ app.listen(PORT, () => {
 })
 
 app.patch("/api/transactions/:id", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            error: "You must be logged in"
+        })
+    }
     // get id
     const id = Number(req.params.id)
     const transaction = db.prepare(
-        "SELECT * FROM transactions WHERE id = ?"
-    ).get(id)
+        "SELECT * FROM transactions WHERE id = ? AND user_id = ?"
+    ).get(id, req.session.userId)
 
     if (!transaction) {
         return res.status(404).json({
@@ -210,13 +215,14 @@ app.patch("/api/transactions/:id", (req, res) => {
     db.prepare(`
         UPDATE transactions
         SET type = ?, amount = ?, category = ?, description = ?
-        WHERE id = ?
+        WHERE id = ? AND user_id = ?
     `).run(
         req.body.type,
         req.body.amount,
         req.body.category,
         req.body.description,
-        id
+        id,
+        req.session.userId
     )
 
     const updatedTransaction = db.prepare(
@@ -228,14 +234,24 @@ app.patch("/api/transactions/:id", (req, res) => {
 
 // budgets
 app.get("/api/budgets", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            error: "You must be logged in"
+        })
+    }
     const budgets = db.prepare(
-        "SELECT * FROM budgets"
-    ).all()
+        "SELECT * FROM budgets WHERE user_id = ?"
+    ).all(req.session.userId)
 
     res.json(budgets)
 })
 
 app.post("/api/budgets", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            error: "You must be logged in"
+        })
+    }
     const { month, amount } = req.body
     const category = req.body.category?.trim()
 
@@ -253,9 +269,9 @@ app.post("/api/budgets", (req, res) => {
     }
     try {
         const result = db.prepare(`
-            INSERT INTO budgets (month, category, amount)
-            VALUES (?, ?, ?)
-        `).run(month, category, amount)
+            INSERT INTO budgets (month, category, amount, user_id)
+            VALUES (?, ?, ?, ?)
+        `).run(month, category, amount, req.session.userId)
 
         const newBudget = db.prepare(
             "SELECT * FROM budgets WHERE id = ?"

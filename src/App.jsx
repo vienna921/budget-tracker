@@ -73,12 +73,22 @@ function App() {
   }, [user])
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/budgets")
-      .then((response) => response.json())
+    if (!user) {
+      return
+    }
+
+    fetch("http://localhost:3000/api/budgets", {
+      credentials: "include"
+    })
+      .then((response) => {
+        console.log("BUDGET STATUS:", response.status)
+        return response.json()
+      })
       .then((data) => {
+        console.log("BUDGET DATA:", data)
         setBudgets(data)
       })
-  }, [])
+  }, [user])
 
   function handleLogin(user) {
     setUser(user)
@@ -141,6 +151,7 @@ function App() {
   function handleSaveEdit(updatedFields) {
     fetch(`http://localhost:3000/api/transactions/${editingId}`, {
       method: "PATCH",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
