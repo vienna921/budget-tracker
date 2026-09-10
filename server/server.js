@@ -43,6 +43,33 @@ app.post("/api/signup", async (req, res) => {
     }
 })
 
+app.post("/api/login", async (req, res) => {
+
+    const { username, password } = req.body
+
+    const user = db.prepare(
+        "SELECT * FROM users WHERE username = ?"
+    ).get(username)
+
+    if (!user) {
+        return res.status(401).json({
+            error: "Invalid username or password"
+        })
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.password)
+
+    if (!passwordMatches) {
+        return res.status(401).json({
+            error: "Invalid username or password"
+        })
+    }
+
+    res.json({
+        message: "Login successful!"
+    })
+})
+
 app.get("/", (req, res) => {
     res.send("Budget Tracker API is running!")
 })

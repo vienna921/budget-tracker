@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import "./index.css"
 import SignupForm from './SignupForm'
+import LoginForm from './LoginForm'
 import Dashboard from "./Dashboard"
 import TransactionForm from './TransactionForm'
 import TransactionItem from "./TransactionItem"
@@ -168,8 +169,9 @@ function App() {
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
+      <LoginForm />
       <SignupForm />
-      
+
       <TransactionForm
         onSubmit={handleSubmit}
         onError={setError}
