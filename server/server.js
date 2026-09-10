@@ -2,12 +2,22 @@ const express = require("express")
 const cors = require("cors")
 const db = require("./database")
 const bcrypt = require("bcrypt")
+const session = require("express-session")
 
 const app = express()
 
-app.use(cors())
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}))
 // if request has JSON data, parse, so I can access
 app.use(express.json())
+
+app.use(session({
+    secret: "my-secret-key",
+    resave: false,
+    saveUninitialized: false
+}))
 
 const PORT = 3000
 
@@ -65,10 +75,23 @@ app.post("/api/login", async (req, res) => {
         })
     }
 
+    // this session belongs to user ID user.id
+    req.session.userId = user.id
     res.json({
         message: "Login successful!"
     })
 })
+
+app.get("/api/me", (req, res) => {
+    console.log("SESSION:", req.session)
+
+    res.json({
+        userId: req.session.userId
+    })
+})
+
+
+
 
 app.get("/", (req, res) => {
     res.send("Budget Tracker API is running!")
