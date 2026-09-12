@@ -1,3 +1,5 @@
+require("dotenv").config()
+
 const express = require("express")
 const cors = require("cors")
 const db = require("./database")
@@ -14,7 +16,7 @@ app.use(cors({
 app.use(express.json())
 
 app.use(session({
-    secret: "my-secret-key",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }))
