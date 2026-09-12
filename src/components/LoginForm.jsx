@@ -8,6 +8,11 @@ function LoginForm({ onLogin }) {
     function handleSubmit(event) {
         event.preventDefault()
 
+        if (!username || !password) {
+            setMessage("Username and password are required")
+            return
+        }
+
         fetch("http://localhost:3000/api/login", {
             method: "POST",
             headers: {

@@ -7,6 +7,11 @@ function SignupForm() {
 
     function handleSubmit(event) {
         event.preventDefault()
+
+        if (!username || !password) {
+            setMessage("Username and password are required")
+            return
+        }
         fetch("http://localhost:3000/api/signup", {
             method: "POST",
             headers: {
