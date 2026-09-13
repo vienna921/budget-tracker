@@ -19,8 +19,12 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    // javascript can't access session cookie
     cookie: {
-        httpOnly: true
+        httpOnly: true,
+        //don't send login cookie when requested from different website
+        // protect against Cross-Site Request Forgery (CSRF)
+        sameSite: "lax"
     }
 }))
 
