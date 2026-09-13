@@ -40,6 +40,12 @@ app.post("/api/signup", async (req, res) => {
         })
     }
 
+    if (username.length < 3 || username.length > 20) {
+        return res.status(400).json({
+            error: "Username must be between 3 and 20 characters"
+        })
+    }
+
     if (password.length < 6) {
         return res.status(400).json({
             error: "Password must be at least 6 characters"
