@@ -63,14 +63,13 @@ app.post("/api/signup", async (req, res) => {
 })
 
 app.post("/api/login", async (req, res) => {
-
+    const { username, password } = req.body
+    
     if (!username || !password) {
         return res.status(400).json({
             error: "Username and password are required"
         })
     }
-
-    const { username, password } = req.body
 
     const user = db.prepare(
         "SELECT * FROM users WHERE username = ?"
@@ -98,6 +97,11 @@ app.post("/api/login", async (req, res) => {
 })
 
 app.get("/api/me", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            error: "You must be logged in"
+        })
+    }
     const user = db.prepare(
         "SELECT id, username FROM users WHERE id = ?"
     ).get(req.session.userId)
