@@ -188,3 +188,19 @@
   gap: 5px;
 }
 
+.receipt-options {
+  display: flex;
+  gap: 10px
+}
+
+.receipt-button {
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  background: white;
+}
+
+.receipt-button input {
+  display: none;
+}

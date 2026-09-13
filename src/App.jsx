@@ -9,6 +9,7 @@ import MonthlySummary from './components/MonthlySummary'
 import BudgetForm from './components/BudgetForm'
 import BudgetList from "./components/BudgetList"
 import EditBudgetForm from "./components/EditBudgetForm"
+import ReceiptScanner from './components/ReceiptScanner'
 
 function App() {
   console.log("App loaded")
@@ -277,6 +278,8 @@ function App() {
         onSubmit={handleSubmit}
         onError={setError}
       />
+
+      <ReceiptScanner />
 
       <Dashboard
         totalIncome={totalIncome}
