@@ -5,6 +5,7 @@ const cors = require("cors")
 const db = require("./database")
 const bcrypt = require("bcrypt")
 const session = require("express-session")
+const rateLimit = require("express-rate-limit")
 
 const app = express()
 
@@ -42,7 +43,7 @@ app.post("/api/signup", async (req, res) => {
 
     if (username.length < 3 || username.length > 20) {
         return res.status(400).json({
-            error: "Username must be between 3 and 20 characters"
+            error: "Username must be between 3 and 20"
         })
     }
 
@@ -69,7 +70,15 @@ app.post("/api/signup", async (req, res) => {
     }
 })
 
-app.post("/api/login", async (req, res) => {
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    message: {
+        error: "Too many login attempts. Please try again later."
+    }
+})
+
+app.post("/api/login", loginLimiter, async (req, res) => {
     const { username, password } = req.body
 
     if (!username || !password) {
