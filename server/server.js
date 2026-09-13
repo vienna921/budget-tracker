@@ -22,7 +22,7 @@ app.use(session({
     // javascript can't access session cookie
     cookie: {
         httpOnly: true,
-        //don't send login cookie when requested from different website
+        // don't send login cookie when requested from different website
         // protect against Cross-Site Request Forgery (CSRF)
         sameSite: "lax"
     }
@@ -63,6 +63,12 @@ app.post("/api/signup", async (req, res) => {
 })
 
 app.post("/api/login", async (req, res) => {
+
+    if (!username || !password) {
+        return res.status(400).json({
+            error: "Username and password are required"
+        })
+    }
 
     const { username, password } = req.body
 
