@@ -1,5 +1,4 @@
 import { useState } from "react"
-import Tesseract from "tesseract.js"
 
 function ReceiptScanner() {
     const [file, setFile] = useState(null)
@@ -16,15 +15,22 @@ function ReceiptScanner() {
         setScanning(true)
 
         try {
-            const result = await Tesseract.recognize(
-                file,
-                "eng"
+            const formData = new FormData()
+
+            formData.append("receipt", file)
+
+            const response = await fetch(
+                "http://localhost:3000/api/scan-receipt",
+                {
+                    method: "POST",
+                    body: formData
+                }
             )
 
-            const extractedText = result.data.text
-            setText(extractedText)
-            const amount = extractAmount(extractedText)
-            console.log("EXTRACTED AMOUNT:", amount)
+                const data = await response.json()
+
+                console.log("OCR RESULT:", data)
+                
         } catch (error) {
             console.error("OCR ERROR:", error)
         } finally {
