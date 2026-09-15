@@ -473,6 +473,7 @@ app.post("/api/scan-receipt", upload.single("receipt"), async (req, res) => {
                 headers: formData.getHeaders()
             }
         )
+        fs.unlinkSync(req.file.path)
 
         // sends Python's result back to whoever called Express
         res.json(response.data)
