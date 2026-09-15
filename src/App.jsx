@@ -279,7 +279,10 @@ function App() {
         onError={setError}
       />
 
-      <ReceiptScanner />
+      <ReceiptScanner 
+        onSubmit={handleSubmit}
+        onError={setError}
+      />
 
       <Dashboard
         totalIncome={totalIncome}

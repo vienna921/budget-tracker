@@ -1,11 +1,9 @@
 import { useState } from "react"
 
-function ReceiptScanner() {
+function ReceiptScanner({ onSubmit, onError }) {
     const [file, setFile] = useState(null)
-    const [text, setText] = useState("")
     const [scanning, setScanning] = useState(false)
     const [receiptData, setReceiptData] = useState(null)
-
 
     function handleFileChange(event) {
         setFile(event.target.files[0])
@@ -65,27 +63,44 @@ function ReceiptScanner() {
                 date: receiptData.date
             })
 
-            const response = await fetch(
-                "http://localhost:3000/api/transactions", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    credentials: "include",
-                    body: JSON.stringify({
-                        type: "expense",
-                        amount: Number(receiptData.amount),
-                        category: receiptData.category,
-                        description: receiptData.merchant,
-                        date: receiptData.date
-                    })
-                }
-            )
-            const data = await response.json()
+            console.log("COOKIES:", document.cookie)
 
-            console.log("SAVED TRANSACTION:", data)
+            const newTransaction = await onSubmit({
+                type: "expense",
+                amount: Number(receiptData.amount),
+                category: receiptData.category,
+                description: receiptData.merchant,
+                date: receiptData.date
+            })
+            // const response = await fetch(
+            //     "http://localhost:3000/api/transactions", {
+            //         method: "POST",
+            //         headers: {
+            //             "Content-Type": "application/json"
+            //         },
+            //         credentials: "include",
+            //         body: JSON.stringify({
+            //             type: "expense",
+            //             amount: Number(receiptData.amount),
+            //             category: receiptData.category,
+            //             description: receiptData.merchant,
+            //             date: receiptData.date
+            //         })
+            //     }
+            // )
+
+            // if (!response.ok) {
+            //     const errorData = await response.json()
+            //     throw new Error(errorData.error)
+            // }
+            
+            // const data = await response.json()
+            console.log("SAVED TRANSACTION:", newTransaction)
+
+            // setSaveMessage("Transaction saved!")
         } catch (error) {
             console.error("SAVED ERROR:", error)
+            onError(error.message)
         }
     }
 
