@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from datetime import datetime
 import cv2
 import pytesseract
 import re
@@ -48,7 +49,11 @@ def extract_date(text):
     )
 
     if date_match:
-        return date_match.group(0)
+        date = datetime.strptime(
+            date_match.group(0),
+            "%m/%d/%Y"
+        )
+        return date.strftime("%Y-%m-%d")
     
     return ""
 

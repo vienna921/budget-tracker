@@ -26,8 +26,13 @@ function ReceiptScanner({ onSubmit, onError }) {
                     method: "POST",
                     body: formData
                 }
-            )
+            )   
 
+                if (!response.ok) {
+                    const errorData = await response.json()
+                    throw new Error(errorData.error || "Could not scan receipt")
+                }
+                
                 const data = await response.json()
             
                 setReceiptData({
