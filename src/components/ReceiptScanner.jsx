@@ -4,6 +4,7 @@ function ReceiptScanner({ onSubmit, onError }) {
     const [file, setFile] = useState(null)
     const [scanning, setScanning] = useState(false)
     const [receiptData, setReceiptData] = useState(null)
+    const [saveMessage, setSaveMessage] = useState("")
 
     function handleFileChange(event) {
         setFile(event.target.files[0])
@@ -72,35 +73,14 @@ function ReceiptScanner({ onSubmit, onError }) {
                 description: receiptData.merchant,
                 date: receiptData.date
             })
-            // const response = await fetch(
-            //     "http://localhost:3000/api/transactions", {
-            //         method: "POST",
-            //         headers: {
-            //             "Content-Type": "application/json"
-            //         },
-            //         credentials: "include",
-            //         body: JSON.stringify({
-            //             type: "expense",
-            //             amount: Number(receiptData.amount),
-            //             category: receiptData.category,
-            //             description: receiptData.merchant,
-            //             date: receiptData.date
-            //         })
-            //     }
-            // )
-
-            // if (!response.ok) {
-            //     const errorData = await response.json()
-            //     throw new Error(errorData.error)
-            // }
-            
-            // const data = await response.json()
+           
             console.log("SAVED TRANSACTION:", newTransaction)
+            setSaveMessage("Transaction saved!")
 
-            // setSaveMessage("Transaction saved!")
         } catch (error) {
             console.error("SAVED ERROR:", error)
             onError(error.message)
+            setSaveMessage("")
         }
     }
 
@@ -192,6 +172,7 @@ function ReceiptScanner({ onSubmit, onError }) {
                     <button onClick={saveTransaction}>
                         Save Transaction
                     </button>
+                    {saveMessage && <p>{saveMessage}</p>}
                 </div>
             )}
 
