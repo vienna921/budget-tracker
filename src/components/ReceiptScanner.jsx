@@ -76,6 +76,8 @@ function ReceiptScanner({ onSubmit, onError }) {
            
             console.log("SAVED TRANSACTION:", newTransaction)
             setSaveMessage("Transaction saved!")
+            setReceiptData(null)
+            setFile(null)
 
         } catch (error) {
             console.error("SAVED ERROR:", error)
@@ -160,7 +162,7 @@ function ReceiptScanner({ onSubmit, onError }) {
                     <label>
                         Category:
                         <input 
-                            value={receiptData.category || "Default Category"} 
+                            value={receiptData.category} 
                             onChange={(event) => 
                                 setReceiptData({
                                     ...receiptData,
@@ -172,10 +174,9 @@ function ReceiptScanner({ onSubmit, onError }) {
                     <button onClick={saveTransaction}>
                         Save Transaction
                     </button>
-                    {saveMessage && <p>{saveMessage}</p>}
                 </div>
             )}
-
+            {saveMessage && <p>{saveMessage}</p>}
         </div>
     )
 }
