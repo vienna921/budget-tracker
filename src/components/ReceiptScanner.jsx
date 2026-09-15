@@ -46,6 +46,16 @@ function ReceiptScanner() {
 
     async function saveTransaction() {
         if (!receiptData) return
+        if (
+            !receiptData.merchant ||
+            !receiptData.amount ||
+            !receiptData.category ||
+            !receiptData.date
+        )  {
+            alert("Please fill in all fields")
+            return
+        }
+
         try {
 
             console.log("SENDING:", {
