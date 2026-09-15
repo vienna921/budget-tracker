@@ -160,6 +160,7 @@ function App() {
 
 
   function handleEdit(transaction) {
+    console.log("Editing:", transaction.id)
     setEditingId(transaction.id)
   }
 

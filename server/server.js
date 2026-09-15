@@ -254,6 +254,21 @@ app.patch("/api/transactions/:id", (req, res) => {
             error: "You must be logged in"
         })
     }
+
+    if (typeof req.body.amount !== "number" || req.body.amount <= 0) {
+        return res.status(400).json({
+            error: "Amount must be a positive number"
+        })
+    }
+
+    if (!req.body.category?.trim() || 
+        !req.body.description?.trim() ||
+        !req.body.date
+    ) {
+        return res.status(400).json({
+          error: "Category, description, amount, and date are required"  
+        })
+    }
     // get id
     const id = Number(req.params.id)
     const transaction = db.prepare(
@@ -268,13 +283,14 @@ app.patch("/api/transactions/:id", (req, res) => {
     
     db.prepare(`
         UPDATE transactions
-        SET type = ?, amount = ?, category = ?, description = ?
+        SET type = ?, amount = ?, category = ?, description = ?, date = ?
         WHERE id = ? AND user_id = ?
     `).run(
         req.body.type,
         req.body.amount,
         req.body.category,
         req.body.description,
+        req.body.date,
         id,
         req.session.userId
     )

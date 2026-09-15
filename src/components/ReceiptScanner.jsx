@@ -38,6 +38,7 @@ function ReceiptScanner({ onSubmit, onError }) {
                 
         } catch (error) {
             console.error("OCR ERROR:", error)
+            onError("Could not scan receipt. Please try again.")
         } finally {
             setScanning(false)
         }
@@ -46,9 +47,9 @@ function ReceiptScanner({ onSubmit, onError }) {
     async function saveTransaction() {
         if (!receiptData) return
         if (
-            !receiptData.merchant ||
+            !receiptData.merchant.trim() ||
             !receiptData.amount ||
-            !receiptData.category ||
+            !receiptData.category.trim() ||
             !receiptData.date
         )  {
             alert("Please fill in all fields")
