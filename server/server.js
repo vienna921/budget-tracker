@@ -185,9 +185,9 @@ app.post("/api/transactions", (req,res) => {
             error: "Amount must be a positive number" 
         })
     }
-    if (!req.body.category || !req.body.description) {
+    if (!req.body.category || !req.body.description || !req.body.date) {
         return res.status(400).json({
-            error: "Category and description are required"
+            error: "Category, description, and date are required"
         })
     }
     

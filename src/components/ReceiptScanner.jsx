@@ -4,6 +4,8 @@ function ReceiptScanner() {
     const [file, setFile] = useState(null)
     const [text, setText] = useState("")
     const [scanning, setScanning] = useState(false)
+    const [receiptData, setReceiptData] = useState(null)
+
 
     function handleFileChange(event) {
         setFile(event.target.files[0])
@@ -28,8 +30,12 @@ function ReceiptScanner() {
             )
 
                 const data = await response.json()
-
-                console.log("OCR RESULT:", data)
+            
+                setReceiptData({
+                    ...data, 
+                    category: data.category || "Default Category",
+                    date: data.date || new Date().toISOString().split("T")[0]
+                })
                 
         } catch (error) {
             console.error("OCR ERROR:", error)
@@ -38,27 +44,39 @@ function ReceiptScanner() {
         }
     }
 
-    function extractAmount(text) {
-        // look for clear TOTAL first
-        const totalMatch = text.match(/\bTOTAL\b[^0-9]*\$?(\d+\.\d{2})/i)
+    async function saveTransaction() {
+        if (!receiptData) return
+        try {
 
-        if (totalMatch) {
-            return totalMatch[1]
-        }
+            console.log("SENDING:", {
+                amount: Number(receiptData.amount),
+                category: receiptData.category,
+                merchant: receiptData.merchant,
+                date: receiptData.date
+            })
 
-        // fallback: find all dollar amounts
-        const amounts = text.match(
-            /\$?\d+\.\d{2}/g
-        )
-
-        if (amounts) {
-            const numbers = amounts.map(amount =>
-                parseFloat(amount.replace("$", ""))
+            const response = await fetch(
+                "http://localhost:3000/api/transactions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        type: "expense",
+                        amount: Number(receiptData.amount),
+                        category: receiptData.category,
+                        description: receiptData.merchant,
+                        date: receiptData.date
+                    })
+                }
             )
-            return Math.max(...numbers).toFixed(2)
-        }
+            const data = await response.json()
 
-        return ""
+            console.log("SAVED TRANSACTION:", data)
+        } catch (error) {
+            console.error("SAVED ERROR:", error)
+        }
     }
 
     return (
@@ -88,11 +106,70 @@ function ReceiptScanner() {
 
             {file && <p>Selected: {file.name}</p>}
 
-            <button onClick={scanReceipt}>
-                Scan Receipt
+            <button 
+                onClick={scanReceipt}
+                disabled={!file || scanning}
+            >
+                {scanning? "Scanning...": "Scan Receipt"}
             </button>
 
-            {text && <pre>{text}</pre>}
+            {receiptData && (
+                <div>
+                    <label>
+                        Merchant:
+                        <input 
+                            value={receiptData.merchant || ""} 
+                            onChange={(event) => 
+                                setReceiptData({
+                                    ...receiptData,
+                                    merchant: event.target.value
+                                })
+                            }
+                        />
+                    </label>
+                    <label>
+                        Amount:
+                        <input 
+                            value={receiptData.amount || ""} 
+                            onChange={(event) => 
+                                setReceiptData({
+                                    ...receiptData,
+                                    amount: event.target.value
+                                })
+                            }
+                        />
+                    </label>
+                    <label>
+                        Date:
+                        <input 
+                            type="date"
+                            value={receiptData.date} 
+                            onChange={(event) => 
+                                setReceiptData({
+                                    ...receiptData,
+                                    date: event.target.value
+                                })
+                            }
+                        />
+                    </label>
+                    <label>
+                        Category:
+                        <input 
+                            value={receiptData.category || "Default Category"} 
+                            onChange={(event) => 
+                                setReceiptData({
+                                    ...receiptData,
+                                    category: event.target.value
+                                })
+                            }
+                        />
+                    </label>
+                    <button onClick={saveTransaction}>
+                        Save Transaction
+                    </button>
+                </div>
+            )}
+
         </div>
     )
 }
