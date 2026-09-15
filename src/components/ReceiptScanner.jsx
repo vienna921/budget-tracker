@@ -32,9 +32,11 @@ function ReceiptScanner({ onSubmit, onError }) {
                     const errorData = await response.json()
                     throw new Error(errorData.error || "Could not scan receipt")
                 }
-                
+
                 const data = await response.json()
-            
+                if (!data.merchang && !data.amount) {
+                    throw new Error("Could not read receipt. Please try a clearer photo.")
+                }
                 setReceiptData({
                     ...data, 
                     category: data.category || "Default Category",
