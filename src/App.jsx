@@ -2,14 +2,12 @@ import { useEffect, useState } from 'react'
 import "./index.css"
 import SignupForm from './components/SignupForm'
 import LoginForm from './components/LoginForm'
-import Dashboard from "./components/Dashboard"
-import TransactionForm from './components/TransactionForm'
-import TransactionList from './components/TransactionList'
-import MonthlySummary from './components/MonthlySummary'
-import BudgetForm from './components/BudgetForm'
-import BudgetList from "./components/BudgetList"
-import EditBudgetForm from "./components/EditBudgetForm"
-import ReceiptScanner from './components/ReceiptScanner'
+
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import DashboardPage from './pages/DashboardPage'
+import TransactionsPage from './pages/TransactionsPage'
+import ReceiptPage from './pages/ReceiptPage'
+import BudgetsPage from './pages/BudgetsPage'
 
 function App() {
   console.log("App loaded")
@@ -256,88 +254,101 @@ function App() {
 
 
   return (
-    <div>
-
-      <h1>Budget Tracker</h1>
-      {user && <p>Welcome, {user.username}!</p>}
-      {user && (
-        <button onClick={handleLogout}>
-          Logout
-        </button>
-      )}
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-
-      {!user && (
-        <>
-          <LoginForm onLogin={handleLogin} />
-          <SignupForm />
-        </>
-      )}
-
-      <TransactionForm
-        onSubmit={handleSubmit}
-        onError={setError}
-      />
-
-      <ReceiptScanner 
-        onSubmit={handleSubmit}
-        onError={setError}
-      />
-
-      <Dashboard
-        totalIncome={totalIncome}
-        totalExpenses={totalExpenses}
-        balance={balance}
-        transactions={transactions}
-      />
-
-      <MonthlySummary
-        transactions={transactions}
-        selectedMonth={selectedMonth}
-      />
-
-      <BudgetForm
-        onBudgetAdded={(newBudget) => {
-          setBudgets((currentBudgets) => [
-            ...currentBudgets,
-            newBudget
-          ])
-        }}
-      />
-
-      <BudgetList
-        budgets={budgets}
-        transactions={transactions}
-        onDelete={handleDeleteBudget}
-        onEdit={handleEditBudget}
-        selectedMonth={selectedBudgetMonth}
-        onMonthChange={setSelectedBudgetMonth}
-      />
-
-       {editingBudget && (
-        <EditBudgetForm 
-          budget={editingBudget}
-          onSave={handleSaveBudget}
+    <BrowserRouter>
+      <nav>
+        <Link to="/">Dashboard</Link>
+        <Link to="/transactions">Transactions</Link>
+        <Link to="/scan">Scan Receipt</Link>
+        <Link to="/budgets">Budgets</Link>
+      </nav>
+      <Routes>
+        <Route 
+          path="/"
+          element={
+            <DashboardPage
+              totalIncome={totalIncome}
+              totalExpenses={totalExpenses}
+              balance={balance}
+              transactions={transactions}
+              selectedMonth={selectedMonth}
+            />
+          }
         />
-      )}
+        <Route
+          path="/transactions"
+          element={
+            <TransactionsPage
+              onSubmit={handleSubmit}
+              onError={setError}
+              transactions={transactions}
+              filter={filter}
+              search={search}
+              selectedMonth={selectedMonth}
+              onSearchChange={setSearch}
+              onMonthChange={setSelectedMonth}
+              onFilterChange={setFilter}
+              months={months}
+              editingId={editingId}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onSaveEdit={handleSaveEdit}
+              onCancelEdit={handleCancelEdit}
+            />
+          }
+        />
+        <Route
+          path="/scan"
+          element={
+            <ReceiptPage
+              onSubmit={handleSubmit}
+              onError={setError}
+            />
+          }
+        />
+        <Route
+          path='/budgets'
+          element={
+            <BudgetsPage
+              budgets={budgets}
+              transactions={transactions}
+              onDelete={handleDeleteBudget}
+              onEdit={handleEditBudget}
+              selectedMonth={selectedBudgetMonth}
+              onMonthChange={setSelectedBudgetMonth}
+              onBudgetAdded={(newBudget) => {
+                setBudgets((currentBudgets) => [
+                  ...currentBudgets,
+                  newBudget
+                ])
+              }}
+              editingBudget={editingBudget}
+              onSaveBudget={handleSaveBudget}
+            />
+          }
+        />
+      </Routes>
+      <div>
 
-      <TransactionList
-        transactions={transactions}
-        filter={filter}
-        search={search}
-        selectedMonth={selectedMonth}
-        onSearchChange={setSearch}
-        onMonthChange={setSelectedMonth}
-        onFilterChange={setFilter}
-        months={months}
-        editingId={editingId}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onSaveEdit={handleSaveEdit}
-        onCancelEdit={handleCancelEdit}
-      />
-    </div>
+        <h1>Budget Tracker</h1>
+        {user && <p>Welcome, {user.username}!</p>}
+        {user && (
+          <button onClick={handleLogout}>
+            Logout
+          </button>
+        )}
+        {loading && <p>Loading...</p>}
+        {error && <p>{error}</p>}
+
+        {!user && (
+          <>
+            <LoginForm onLogin={handleLogin} />
+            <SignupForm />
+          </>
+        )}
+
+
+      </div>
+    </BrowserRouter>
   )
 }
 

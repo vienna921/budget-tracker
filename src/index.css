@@ -12,7 +12,7 @@
   border: 1px solid #ccc;
   padding: 20px;
   border-radius: 10px;
-  min-width: 150px;
+  flex: 1
 }
 
 .dashboard-card h3 {
@@ -41,6 +41,7 @@
   border-radius: 10px;
   padding: 15px;
   margin-top: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 }
 
 .transaction-item.income {
@@ -105,7 +106,7 @@
 
 .search-input {
   width: 100%;
-  max-width: 400 px;
+  max-width: 400px;
   box-sizing: border-box;
   padding: 10px;
   margin-bottom: 15px;
@@ -203,4 +204,125 @@
 
 .receipt-button input {
   display: none;
+}
+
+@media (max-width: 600px) {
+  .transaction-item {
+    padding: 12px;
+  }
+
+  .transaction-item button {
+    width: 100%;
+    margin-top: 8px;
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  form {
+    width: 100%;
+  }
+
+  form input,
+  form select,
+  form button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 600px) {
+  .receipt-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .receipt-button {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .dashboard > * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+nav {
+  display: flex;
+  gap: 20px;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+nav a {
+  text-decoration: none;
+  color: black;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+main,
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.receipt-review {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.receipt-review label {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.receipt-review input {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  padding: 10px;
+  margin-top: 5px;
+}
+
+.budget-table {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .budget-table {
+    overflow-x: auto;
+  }
+
+  .budget-header,
+  .budget-row {
+    min-width: 700px;
+  }
 }

@@ -129,7 +129,7 @@ function ReceiptScanner({ onSubmit, onError }) {
             </button>
 
             {receiptData && (
-                <div>
+                <div className="receipt-review">
                     <label>
                         Merchant:
                         <input 
