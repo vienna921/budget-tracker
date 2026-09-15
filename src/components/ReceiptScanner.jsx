@@ -1,10 +1,10 @@
 import { useState } from "react"
 
-function ReceiptScanner() {
+function ReceiptScanner({ onSubmit, onError }) {
     const [file, setFile] = useState(null)
-    const [text, setText] = useState("")
     const [scanning, setScanning] = useState(false)
     const [receiptData, setReceiptData] = useState(null)
+    const [saveMessage, setSaveMessage] = useState("")
 
     function handleFileChange(event) {
         setFile(event.target.files[0])
@@ -26,40 +26,72 @@ function ReceiptScanner() {
                     method: "POST",
                     body: formData
                 }
-            )
+            )   
+
+                if (!response.ok) {
+                    const errorData = await response.json()
+                    throw new Error(errorData.error || "Could not scan receipt")
+                }
 
                 const data = await response.json()
-
-                setReceiptData(data)
+                if (!data.merchang && !data.amount) {
+                    throw new Error("Could not read receipt. Please try a clearer photo.")
+                }
+                setReceiptData({
+                    ...data, 
+                    category: data.category || "Default Category",
+                    date: data.date || new Date().toISOString().split("T")[0]
+                })
                 
         } catch (error) {
             console.error("OCR ERROR:", error)
+            onError("Could not scan receipt. Please try again.")
         } finally {
             setScanning(false)
         }
     }
 
-    function extractAmount(text) {
-        // look for clear TOTAL first
-        const totalMatch = text.match(/\bTOTAL\b[^0-9]*\$?(\d+\.\d{2})/i)
-
-        if (totalMatch) {
-            return totalMatch[1]
+    async function saveTransaction() {
+        if (!receiptData) return
+        if (
+            !receiptData.merchant.trim() ||
+            !receiptData.amount ||
+            !receiptData.category.trim() ||
+            !receiptData.date
+        )  {
+            alert("Please fill in all fields")
+            return
         }
 
-        // fallback: find all dollar amounts
-        const amounts = text.match(
-            /\$?\d+\.\d{2}/g
-        )
+        try {
 
-        if (amounts) {
-            const numbers = amounts.map(amount =>
-                parseFloat(amount.replace("$", ""))
-            )
-            return Math.max(...numbers).toFixed(2)
+            console.log("SENDING:", {
+                amount: Number(receiptData.amount),
+                category: receiptData.category,
+                merchant: receiptData.merchant,
+                date: receiptData.date
+            })
+
+            console.log("COOKIES:", document.cookie)
+
+            const newTransaction = await onSubmit({
+                type: "expense",
+                amount: Number(receiptData.amount),
+                category: receiptData.category,
+                description: receiptData.merchant,
+                date: receiptData.date
+            })
+           
+            console.log("SAVED TRANSACTION:", newTransaction)
+            setSaveMessage("Transaction saved!")
+            setReceiptData(null)
+            setFile(null)
+
+        } catch (error) {
+            console.error("SAVED ERROR:", error)
+            onError(error.message)
+            setSaveMessage("")
         }
-
-        return ""
     }
 
     return (
@@ -89,19 +121,70 @@ function ReceiptScanner() {
 
             {file && <p>Selected: {file.name}</p>}
 
-            <button onClick={scanReceipt}>
-                Scan Receipt
+            <button 
+                onClick={scanReceipt}
+                disabled={!file || scanning}
+            >
+                {scanning? "Scanning...": "Scan Receipt"}
             </button>
-
-            {text && <pre>{text}</pre>}
 
             {receiptData && (
                 <div>
-                    <p>Merchant: {receiptData.merchant}</p>
-                    <p>Amount: ${receiptData.amount}</p>
-                    <p>Date: {receiptData.date}</p>
+                    <label>
+                        Merchant:
+                        <input 
+                            value={receiptData.merchant || ""} 
+                            onChange={(event) => 
+                                setReceiptData({
+                                    ...receiptData,
+                                    merchant: event.target.value
+                                })
+                            }
+                        />
+                    </label>
+                    <label>
+                        Amount:
+                        <input 
+                            value={receiptData.amount || ""} 
+                            onChange={(event) => 
+                                setReceiptData({
+                                    ...receiptData,
+                                    amount: event.target.value
+                                })
+                            }
+                        />
+                    </label>
+                    <label>
+                        Date:
+                        <input 
+                            type="date"
+                            value={receiptData.date} 
+                            onChange={(event) => 
+                                setReceiptData({
+                                    ...receiptData,
+                                    date: event.target.value
+                                })
+                            }
+                        />
+                    </label>
+                    <label>
+                        Category:
+                        <input 
+                            value={receiptData.category} 
+                            onChange={(event) => 
+                                setReceiptData({
+                                    ...receiptData,
+                                    category: event.target.value
+                                })
+                            }
+                        />
+                    </label>
+                    <button onClick={saveTransaction}>
+                        Save Transaction
+                    </button>
                 </div>
             )}
+            {saveMessage && <p>{saveMessage}</p>}
         </div>
     )
 }

@@ -5,6 +5,7 @@ function EditTransactionForm({ transaction, onSave, onCancel }) {
     const [category, setCategory] = useState(transaction.category)
     const [description, setDescription] = useState(transaction.description)
     const [type, setType] = useState(transaction.type)
+    const [date, setDate] = useState(transaction.date)
 
     return (
         <div>
@@ -26,6 +27,12 @@ function EditTransactionForm({ transaction, onSave, onCancel }) {
                 onChange={(event) => setDescription(event.target.value)}
             />
 
+            <input 
+                type="date"
+                value={date}
+                onChange={(event) => setDate(event.target.value)}
+            />
+
             <select 
                 value={type}
                 onChange={(event) => setType(event.target.value)}
@@ -40,7 +47,8 @@ function EditTransactionForm({ transaction, onSave, onCancel }) {
                         amount: Number(amount),
                         category,
                         description,
-                        type
+                        type,
+                        date
                     })
                 }
             >

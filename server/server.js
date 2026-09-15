@@ -6,6 +6,10 @@ const db = require("./database")
 const bcrypt = require("bcrypt")
 const session = require("express-session")
 const rateLimit = require("express-rate-limit")
+const axios = require("axios")
+const multer = require("multer")
+const fs = require("fs")
+const FormData = require("form-data")
 
 const app = express()
 
@@ -15,6 +19,8 @@ app.use(cors({
 }))
 // if request has JSON data, parse, so I can access
 app.use(express.json())
+
+const upload = multer({ dest: "uploads/" })
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -179,9 +185,9 @@ app.post("/api/transactions", (req,res) => {
             error: "Amount must be a positive number" 
         })
     }
-    if (!req.body.category || !req.body.description) {
+    if (!req.body.category || !req.body.description || !req.body.date) {
         return res.status(400).json({
-            error: "Category and description are required"
+            error: "Category, description, and date are required"
         })
     }
     
@@ -248,6 +254,21 @@ app.patch("/api/transactions/:id", (req, res) => {
             error: "You must be logged in"
         })
     }
+
+    if (typeof req.body.amount !== "number" || req.body.amount <= 0) {
+        return res.status(400).json({
+            error: "Amount must be a positive number"
+        })
+    }
+
+    if (!req.body.category?.trim() || 
+        !req.body.description?.trim() ||
+        !req.body.date
+    ) {
+        return res.status(400).json({
+          error: "Category, description, amount, and date are required"  
+        })
+    }
     // get id
     const id = Number(req.params.id)
     const transaction = db.prepare(
@@ -262,13 +283,14 @@ app.patch("/api/transactions/:id", (req, res) => {
     
     db.prepare(`
         UPDATE transactions
-        SET type = ?, amount = ?, category = ?, description = ?
+        SET type = ?, amount = ?, category = ?, description = ?, date = ?
         WHERE id = ? AND user_id = ?
     `).run(
         req.body.type,
         req.body.amount,
         req.body.category,
         req.body.description,
+        req.body.date,
         id,
         req.session.userId
     )
@@ -429,6 +451,38 @@ app.patch("/api/budgets/:id", (req, res) => {
 
         res.status(500).json({
             error: "Failed to update budget"
+        })
+    }
+})
+
+app.post("/api/scan-receipt", upload.single("receipt"), async (req, res) => {
+    try {
+        console.log("RECEIVED FILE:", req.file)
+        
+        // create form that holds a file
+        const formData = new FormData()
+
+        // take file Multer saved and put into form named "receipt"
+        formData.append("receipt", fs.createReadStream(req.file.path))
+
+        // axios is like fetch, sends form to Python
+        const response = await axios.post(
+            "http://localhost:5001/ocr",
+            formData,
+            {
+                headers: formData.getHeaders()
+            }
+        )
+        fs.unlinkSync(req.file.path)
+
+        // sends Python's result back to whoever called Express
+        res.json(response.data)
+
+    } catch (error) {
+        console.error("OCR ERROR:", error.message)
+
+        res.status(500).json({
+            error: "Could not process receipt"
         })
     }
 })

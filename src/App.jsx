@@ -160,6 +160,7 @@ function App() {
 
 
   function handleEdit(transaction) {
+    console.log("Editing:", transaction.id)
     setEditingId(transaction.id)
   }
 
@@ -279,7 +280,10 @@ function App() {
         onError={setError}
       />
 
-      <ReceiptScanner />
+      <ReceiptScanner 
+        onSubmit={handleSubmit}
+        onError={setError}
+      />
 
       <Dashboard
         totalIncome={totalIncome}
