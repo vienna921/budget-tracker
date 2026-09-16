@@ -23,6 +23,8 @@ const FormData = require("form-data")
 
 const app = express()
 
+console.log("CORS URL:", "https://budget-tracker-ht4coicv7-viennatan21-8087s-projects.vercel.app")
+
 app.use(cors({
     origin: "https://budget-tracker-ht4coicv7-viennatan21-8087s-projects.vercel.app",
     credentials: true
