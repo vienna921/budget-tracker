@@ -24,7 +24,7 @@ const FormData = require("form-data")
 const app = express()
 
 app.use(cors({
-    origin: "https://budget-tracker-viennatan21-8087s-projects.vercel.app",
+    origin: "https://budget-tracker-ht4coicv7-viennatan21-8087s-projects.vercel.app",
     credentials: true
 }))
 // if request has JSON data, parse, so I can access
