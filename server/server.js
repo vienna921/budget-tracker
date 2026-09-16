@@ -16,6 +16,7 @@ db.query("SELECT NOW()")
 const bcrypt = require("bcrypt")
 const session = require("express-session")
 const pgSession = require("connect-pg-simple")(session)
+const OCR_URL = process.env.OCR_URL || "http://localhost:5001"
 const rateLimit = require("express-rate-limit")
 const axios = require("axios")
 const multer = require("multer")
@@ -608,7 +609,7 @@ app.post("/api/scan-receipt", upload.single("receipt"), async (req, res) => {
 
         // axios is like fetch, sends form to Python
         const response = await axios.post(
-            "http://localhost:5001/ocr",
+            `${OCR_URL}/ocr`,
             formData,
             {
                 headers: formData.getHeaders()
