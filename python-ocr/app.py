@@ -89,10 +89,13 @@ def ocr():
     
     height, width = image.shape[:2]
 
-    resized_image = cv2.resize(
-        image,
-        (width * 2, height * 2)
-    )
+    if width > 2000:
+        resized_image = cv2.resize(
+            image,
+            (width // 2, height // 2)
+        )
+    else:
+        resized_image = image
 
     gray_image = cv2.cvtColor(
         resized_image,
