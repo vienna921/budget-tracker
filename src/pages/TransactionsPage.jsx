@@ -35,7 +35,7 @@ function TransactionsPage({
                 onFilterChange={onFilterChange}
                 months={months}
                 editingId={editingId}
-                onEdit={editingId}
+                onEdit={onEdit}
                 onDelete={onDelete}
                 onSaveEdit={onSaveEdit}
                 onCancelEdit={onCancelEdit}
