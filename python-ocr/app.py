@@ -81,10 +81,8 @@ def ocr():
     print("OCR STARTED")
 
     text = pytesseract.image_to_string(threshold_image, config="--psm 6")
-    print("TESSERACT FINISHED:", time.time() - start)
 
     file = request.files["receipt"]
-
     file.save("uploaded-receipt.jpg")
 
     image = cv2.imread("uploaded-receipt.jpg")
@@ -112,6 +110,7 @@ def ocr():
         threshold_image,
         config="--psm 6"
     )
+    print("TESSERACT FINISHED:", time.time() - start)
 
     amount = extract_amount(text)
     date = extract_date(text)
