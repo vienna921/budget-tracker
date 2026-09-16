@@ -78,7 +78,7 @@ def extract_merchant(text):
 def ocr():
     import time
     start = time.time()
-    print("OCR STARTED")
+    print("========== OCR STARTED ==========", flush=True)
 
 
     file = request.files["receipt"]
@@ -109,7 +109,8 @@ def ocr():
         threshold_image,
         config="--psm 6"
     )
-    print("TESSERACT FINISHED:", time.time() - start)
+
+    print("========== TESSERACT FINISHED:", time.time() - start, "==========", flush=True)
 
     amount = extract_amount(text)
     date = extract_date(text)
@@ -121,7 +122,7 @@ def ocr():
         "date": date
     }
 
-    print("OCR TOTAL TIME:", time.time() - start)
+    print("========== OCR TOTAL TIME:", time.time() - start, "==========", flush=True)
     return jsonify(receipt_data)
 
 
