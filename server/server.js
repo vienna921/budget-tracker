@@ -26,7 +26,7 @@ const app = express()
 console.log("CORS URL:", "https://budget-tracker-ht4coicv7-viennatan21-8087s-projects.vercel.app")
 
 app.use(cors({
-    origin: "https://budget-tracker-ht4coicv7-viennatan21-8087s-projects.vercel.app",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true
 }))
 // if request has JSON data, parse, so I can access
