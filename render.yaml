@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: budget-tracker-ocr
+    runtime: python
+    rootDir: python-ocr
+    buildCommand: pip install -r requirements.txt && apt-get update && apt-get install -y tesseract-ocr
+    startCommand: python app.py
