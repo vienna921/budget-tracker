@@ -80,7 +80,6 @@ def ocr():
     start = time.time()
     print("OCR STARTED")
 
-    text = pytesseract.image_to_string(threshold_image, config="--psm 6")
 
     file = request.files["receipt"]
     file.save("uploaded-receipt.jpg")
