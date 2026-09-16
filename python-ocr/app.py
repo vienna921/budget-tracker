@@ -76,6 +76,13 @@ def extract_merchant(text):
 
 @app.route("/ocr", methods=["POST"])
 def ocr():
+    import time
+    start = time.time()
+    print("OCR STARTED")
+
+    text = pytesseract.image_to_string(threshold_image, config="--psm 6")
+    print("TESSERACT FINISHED:", time.time() - start)
+
     file = request.files["receipt"]
 
     file.save("uploaded-receipt.jpg")
@@ -116,6 +123,7 @@ def ocr():
         "date": date
     }
 
+    print("OCR TOTAL TIME:", time.time() - start)
     return jsonify(receipt_data)
 
 
