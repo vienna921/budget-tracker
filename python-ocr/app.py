@@ -85,6 +85,7 @@ def ocr():
     file.save("uploaded-receipt.jpg")
 
     image = cv2.imread("uploaded-receipt.jpg")
+    print("ORIGINAL SIZE:", image.shape, flush=True)
     
     height, width = image.shape[:2]
 
@@ -129,8 +130,6 @@ def ocr():
 @app.route("/")
 def home():
     image = cv2.imread("receipt-wholefoods.jpg")
-    print("ORIGINAL SIZE:", image.shape, flush=True)
-
     height, width = image.shape[:2]
 
     new_width = width * 2
