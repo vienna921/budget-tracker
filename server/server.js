@@ -15,6 +15,7 @@ db.query("SELECT NOW()")
 
 const bcrypt = require("bcrypt")
 const session = require("express-session")
+const pgSession = require("connect-pg-simple")(session)
 const rateLimit = require("express-rate-limit")
 const axios = require("axios")
 const multer = require("multer")
@@ -40,6 +41,10 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    // use PostgreSQL db to store Express sessions
+    store: new pgSession({
+        pool: db
+    }),
     // javascript can't access session cookie
     cookie: {
         httpOnly: true,
