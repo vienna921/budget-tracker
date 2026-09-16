@@ -1,3 +1,4 @@
+const API_URL = import.meta.env.VITE_API_URL
 import { useState } from "react"
 
 function BudgetForm({ onBudgetAdded }) {
@@ -21,7 +22,7 @@ function BudgetForm({ onBudgetAdded }) {
             return
         }
 
-        fetch("http://localhost:3000/api/budgets", {
+        fetch(`${API_URL}/api/budgets`, {
             method: "POST",
             credentials: "include",
             headers: {

@@ -1,3 +1,4 @@
+const API_URL = import.meta.env.VITE_API_URL
 import { useState } from "react"
 
 function SignupForm() {
@@ -12,7 +13,7 @@ function SignupForm() {
             setMessage("Username and password are required")
             return
         }
-        fetch("http://localhost:3000/api/signup", {
+        fetch(`${API_URL}/api/signup`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

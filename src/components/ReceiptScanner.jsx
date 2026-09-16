@@ -1,3 +1,4 @@
+const API_URL = import.meta.env.VITE_API_URL
 import { useState } from "react"
 
 function ReceiptScanner({ onSubmit, onError }) {
@@ -21,7 +22,7 @@ function ReceiptScanner({ onSubmit, onError }) {
             formData.append("receipt", file)
 
             const response = await fetch(
-                "http://localhost:3000/api/scan-receipt",
+                `${API_URL}/api/scan-receipt`,
                 {
                     method: "POST",
                     body: formData

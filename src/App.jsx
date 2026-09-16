@@ -1,3 +1,5 @@
+const API_URL = import.meta.env.VITE_API_URL
+
 import { useEffect, useState } from 'react'
 import "./index.css"
 import SignupForm from './components/SignupForm'
@@ -25,7 +27,7 @@ function App() {
 
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/me", {
+    fetch(`${API_URL}/api/me`, {
       credentials: "include"
     })
       .then((response) => {
@@ -52,7 +54,7 @@ function App() {
     }
     setError("")
     //make http requests
-    fetch("http://localhost:3000/api/transactions", {
+    fetch(`${API_URL}/api/transactions`, {
       credentials: "include"
     })
       // response.json() - React turn that response to JavaScript data
@@ -81,7 +83,7 @@ function App() {
       return
     }
 
-    fetch("http://localhost:3000/api/budgets", {
+    fetch(`${API_URL}/api/budgets`, {
       credentials: "include"
     })
       .then((response) => {
@@ -99,7 +101,7 @@ function App() {
   }
 
   function handleLogout() {
-    fetch("http://localhost:3000/api/logout", {
+    fetch(`${API_URL}/api/logout`, {
       method: "POST",
       credentials: "include"
     })
@@ -112,7 +114,7 @@ function App() {
   }
 
   function handleSubmit(transaction) {
-    return fetch("http://localhost:3000/api/transactions", {
+    return fetch(`${API_URL}/api/transactions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -142,7 +144,7 @@ function App() {
   }
 
   function handleDelete(id) {
-    fetch(`http://localhost:3000/api/transactions/${id}`, {
+    fetch(`${API_URL}/api/transactions/${id}`, {
       method: "DELETE",
       credentials: "include"
     })
@@ -167,7 +169,7 @@ function App() {
   }
 
   function handleSaveEdit(updatedFields) {
-    fetch(`http://localhost:3000/api/transactions/${editingId}`, {
+    fetch(`${API_URL}/api/transactions/${editingId}`, {
       method: "PATCH",
       credentials: "include",
       headers: {
@@ -189,7 +191,7 @@ function App() {
   }
 
   function handleDeleteBudget(id) {
-    fetch(`http://localhost:3000/api/budgets/${id}`, {
+    fetch(`${API_URL}/api/budgets/${id}`, {
       method: "DELETE",
       credentials: "include"
     })
@@ -208,7 +210,7 @@ function App() {
   }
 
   function handleSaveBudget(updatedBudget) {
-    fetch(`http://localhost:3000/api/budgets/${updatedBudget.id}`, {
+    fetch(`${API_URL}/api/budgets/${updatedBudget.id}`, {
       method: "PATCH",
       credentials: "include",
       headers: {

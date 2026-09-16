@@ -1,3 +1,4 @@
+const API_URL = import.meta.env.VITE_API_URL
 import { useState } from "react"
 
 function LoginForm({ onLogin }) {
@@ -13,7 +14,7 @@ function LoginForm({ onLogin }) {
             return
         }
 
-        fetch("http://localhost:3000/api/login", {
+        fetch(`${API_URL}/api/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -34,7 +35,7 @@ function LoginForm({ onLogin }) {
         })
         .then((data) => {
             setMessage(data.message)
-            return fetch("http://localhost:3000/api/me", {
+            return fetch(`${API_URL}/api/me`, {
                 credentials: "include"
             })
         })
