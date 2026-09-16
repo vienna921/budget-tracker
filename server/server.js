@@ -34,6 +34,8 @@ app.use(express.json())
 
 const upload = multer({ dest: "uploads/" })
 
+app.set("trust proxy", 1)
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -43,7 +45,7 @@ app.use(session({
         httpOnly: true,
         // don't send login cookie when requested from different website
         // protect against Cross-Site Request Forgery (CSRF)
-        sameSite: "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         secure: process.env.NODE_ENV === "production"
     }
 }))
