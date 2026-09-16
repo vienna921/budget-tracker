@@ -129,6 +129,7 @@ def ocr():
 @app.route("/")
 def home():
     image = cv2.imread("receipt-wholefoods.jpg")
+    print("ORIGINAL SIZE:", image.shape, flush=True)
 
     height, width = image.shape[:2]
 
