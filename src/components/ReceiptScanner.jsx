@@ -35,7 +35,7 @@ function ReceiptScanner({ onSubmit, onError }) {
                 }
 
                 const data = await response.json()
-                if (!data.merchang && !data.amount) {
+                if (!data.merchant || !data.amount) {
                     throw new Error("Could not read receipt. Please try a clearer photo.")
                 }
                 setReceiptData({
@@ -45,8 +45,7 @@ function ReceiptScanner({ onSubmit, onError }) {
                 })
                 
         } catch (error) {
-            console.error("OCR ERROR:", error)
-            onError("Could not scan receipt. Please try again.")
+            onError(error.message)
         } finally {
             setScanning(false)
         }
@@ -65,31 +64,19 @@ function ReceiptScanner({ onSubmit, onError }) {
         }
 
         try {
-
-            console.log("SENDING:", {
-                amount: Number(receiptData.amount),
-                category: receiptData.category,
-                merchant: receiptData.merchant,
-                date: receiptData.date
-            })
-
-            console.log("COOKIES:", document.cookie)
-
-            const newTransaction = await onSubmit({
+            await onSubmit({
                 type: "expense",
                 amount: Number(receiptData.amount),
                 category: receiptData.category,
                 description: receiptData.merchant,
                 date: receiptData.date
             })
-           
-            console.log("SAVED TRANSACTION:", newTransaction)
+
             setSaveMessage("Transaction saved!")
             setReceiptData(null)
             setFile(null)
 
         } catch (error) {
-            console.error("SAVED ERROR:", error)
             onError(error.message)
             setSaveMessage("")
         }
