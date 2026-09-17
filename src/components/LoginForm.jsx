@@ -35,13 +35,7 @@ function LoginForm({ onLogin }) {
         })
         .then((data) => {
             setMessage(data.message)
-            return fetch(`${API_URL}/api/me`, {
-                credentials: "include"
-            })
-        })
-        .then((response) => response.json())
-        .then((user) => {
-            onLogin(user)
+            onLogin()
         })
         .catch((error) => {
             setMessage(error.message)

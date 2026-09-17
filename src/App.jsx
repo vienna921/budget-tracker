@@ -97,8 +97,22 @@ function App() {
   }, [user])
 
   function handleLogin(user) {
-    setUser(user)
-  }
+    fetch(`${API_URL}/api/me`, {
+      credentials: "include"
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Could not load user")
+        }
+        return response.json()
+      })
+      .then((user) => {
+          setUser(user)
+      })
+      .catch((error) => {
+          console.error("LOGIN USER ERROR:", error)
+      })
+}
 
   function handleLogout() {
     fetch(`${API_URL}/api/logout`, {
