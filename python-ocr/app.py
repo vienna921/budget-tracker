@@ -96,8 +96,6 @@ def ocr():
         )
     else:
         resized_image = image
-        
-    print("OCR SIZE:", resized_image.shape, flush=True)
 
     gray_image = cv2.cvtColor(
         resized_image,
