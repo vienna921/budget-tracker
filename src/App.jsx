@@ -48,17 +48,22 @@ function App() {
   // GET request
   // do this when component loads or renders
   useEffect(() => {
+    console.log("TRANSACTION EFFECT STARTED, USER:", user)
     if (!user) {
       setLoading(false)
       return
     }
     setError("")
+
+    console.log("FETCHING TRANSACTIONS FROM:", `${API_URL}/api/transactions`)
+
     //make http requests
     fetch(`${API_URL}/api/transactions`, {
       credentials: "include"
     })
       // response.json() - React turn that response to JavaScript data
       .then((response) => {
+        console.log("TRANSACTION RESPONSE:", response.status)
         // error handling
         if (!response.ok) {
           throw new Error("Failed to load transactions")
@@ -70,6 +75,7 @@ function App() {
         setTransactions(data)
       })
       .catch((error) => {
+        console.error("TRANSACTION ERROR:", error)
         setError(error.message)
       })
       .finally(() => {
