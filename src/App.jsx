@@ -66,6 +66,7 @@ function App() {
         return response.json()
       })
       .then((data) => {
+        console.log("TRANSACTION DATA:", data)
         setTransactions(data)
       })
       .catch((error) => {
