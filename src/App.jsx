@@ -273,6 +273,7 @@ function App() {
               balance={balance}
               transactions={transactions}
               selectedMonth={selectedMonth}
+              setSelectedMonth={setSelectedMonth}
             />
           }
         />
