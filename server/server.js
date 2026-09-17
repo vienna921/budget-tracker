@@ -51,7 +51,7 @@ app.use(session({
         httpOnly: true,
         // don't send login cookie when requested from different website
         // protect against Cross-Site Request Forgery (CSRF)
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        sameSite: "none",
         secure: process.env.NODE_ENV === "production"
     }
 }))
