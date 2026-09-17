@@ -94,109 +94,96 @@ A full-stack personal finance application for tracking income, expenses, budgets
                                  └──────────────┘
 ## How It Works
 ### Authentication
-
-Users create an account with a username and password. Passwords are hashed using bcrypt before being stored in PostgreSQL.
-
-After login, Express creates a server-side session. Session information is stored in PostgreSQL so authenticated sessions can persist across server restarts.
-
-Protected API routes use the authenticated user's session to ensure transactions and budgets belong to the correct user.
+    - Users create an account with a username and password. Passwords are hashed using bcrypt before being stored in PostgreSQL.
+    - After login, Express creates a server-side session. Session information is stored in PostgreSQL so authenticated sessions can persist across server restarts.
+    - Protected API routes use the authenticated user's session to ensure transactions and budgets belong to the correct user.
 
 ### Transactions
+    - Transactions are stored in PostgreSQL and associated with the authenticated user.
+    - Each transaction contains:
 
-Transactions are stored in PostgreSQL and associated with the authenticated user.
+        type
+        amount
+        category
+        description
+        date
+        user_id
 
-Each transaction contains:
+    - The frontend communicates with the Express API using HTTP requests such as:
 
-type
-amount
-category
-description
-date
-user_id
-
-The frontend communicates with the Express API using HTTP requests such as:
-
-GET
-POST
-PATCH
-DELETE
+        GET
+        POST
+        PATCH
+        DELETE
 
 ### Budgets
+    - Budgets are associated with both a user and a month/category combination.
+    - This allows different users to maintain separate budgets while preventing duplicate budgets for the same category in the same month.
 
-Budgets are associated with both a user and a month/category combination.
+        Receipt OCR
+        
+        Receipt scanning follows this flow:
+        
+        Receipt image
+             ↓
+        React frontend
+             ↓
+        Express API
+             ↓
+        Python OCR service
+             ↓
+        OpenCV + Tesseract
+             ↓
+        Extracted receipt data
+             ↓
+        Review/edit form
+             ↓
+        PostgreSQL transaction
 
-This allows different users to maintain separate budgets while preventing duplicate budgets for the same category in the same month.
-
-Receipt OCR
-
-Receipt scanning follows this flow:
-
-Receipt image
-     ↓
-React frontend
-     ↓
-Express API
-     ↓
-Python OCR service
-     ↓
-OpenCV + Tesseract
-     ↓
-Extracted receipt data
-     ↓
-Review/edit form
-     ↓
-PostgreSQL transaction
-
-The extracted information is shown to the user before being saved, allowing the user to correct OCR mistakes.
+    - The extracted information is shown to the user before being saved, allowing the user to correct OCR mistakes.
 
 ## Running Locally
 1. Clone the repository
-    git clone https://github.com/vienna921/budget-tracker.git
-    cd budget-tracker
+    - git clone https://github.com/vienna921/budget-tracker.git
+    - cd budget-tracker
 
 2. Install frontend dependencies
-    npm install
-
+    - npm install
 3. Install backend dependencies
-    cd server
-    npm install
-    cd ..
+    - cd server
+    - npm install
+    - cd ..
 
 4. Create environment variables
+    - Create a .env file in the project root:
+    - VITE_API_URL=http://localhost:3000
+    - Create a .env file inside the server directory:
 
-    Create a .env file in the project root:
+    - DATABASE_URL=your_postgresql_connection_string
+    - SESSION_SECRET=your_session_secret
+    - FRONTEND_URL=http://localhost:5173
+    - NODE_ENV=development
+    - OCR_URL=http://localhost:5001
 
-    VITE_API_URL=http://localhost:3000
+    - Never commit .env files or secret values to GitHub.
 
-    Create a .env file inside the server directory:
-
-    DATABASE_URL=your_postgresql_connection_string
-    SESSION_SECRET=your_session_secret
-    FRONTEND_URL=http://localhost:5173
-    NODE_ENV=development
-    OCR_URL=http://localhost:5001
-
-    Never commit .env files or secret values to GitHub.
-
-5. Start the frontend
-
+6. Start the frontend
     From the project root:
-    npm run dev
+    - npm run dev
     The frontend will run on:
-    http://localhost:5173
+    - http://localhost:5173
 
-6. Start the Express server
-
+7. Start the Express server
     In another terminal:
-    cd server
-    node server.js
+    - cd server
+    - node server.js
     The API will run on:
-    http://localhost:3000
+    - http://localhost:3000
 
-7. Start the OCR service
+8. Start the OCR service
     From the python-ocr directory, install the required Python packages and start the Flask server.
     The local OCR service runs on:
-    http://localhost:5001
+    - http://localhost:5001
 
 ## API Overview
 ### Authentication
@@ -223,31 +210,31 @@ The main PostgreSQL tables are:
 Stores authenticated users and hashed passwords.
 
 users
-├── id
-├── username
-└── password
+    ├── id
+    ├── username
+    └── password
 
 ### Transactions
 Stores user transactions.
 
-transactions
-├── id
-├── type
-├── amount
-├── category
-├── description
-├── date
-└── user_id
+#### transactions
+    ├── id
+    ├── type
+    ├── amount
+    ├── category
+    ├── description
+    ├── date
+    └── user_id
 
 ### Budgets
 Stores monthly category budgets.
 
-budgets
-├── id
-├── month
-├── category
-├── amount
-└── user_id
+#### budgets
+    ├── id
+    ├── month
+    ├── category
+    ├── amount
+    └── user_id
 
 ### Sessions
 Server-side authentication sessions are stored in PostgreSQL using connect-pg-simple.
@@ -256,28 +243,28 @@ Server-side authentication sessions are stored in PostgreSQL using connect-pg-si
 
 This project was built to practice full-stack development and helped me work with:
 
-React components and state
-React hooks such as useState and useEffect
-React Router
-REST APIs
-HTTP methods
-JSON
-Express
-Authentication and authorization
-Password hashing with bcrypt
-Server-side sessions
-Cookies and CORS
-PostgreSQL and SQL
-Database relationships
-Async JavaScript and fetch
-File uploads
-OCR processing
-Python and Flask
-Docker
-Environment variables
-Git and GitHub
-Cloud deployment
-Connecting multiple deployed services
+    - React components and state
+    - React hooks such as useState and useEffect
+    - React Router
+    - REST APIs
+    - HTTP methods
+    - JSON
+    - Express
+    - Authentication and authorization
+    - Password hashing with bcrypt
+    - Server-side sessions
+    - Cookies and CORS
+    - PostgreSQL and SQL
+    - Database relationships
+    - Async JavaScript and fetch
+    - File uploads
+    - OCR processing
+    - Python and Flask
+    - Docker
+    - Environment variables
+    - Git and GitHub
+    - Cloud deployment
+    - Connecting multiple deployed services
 
 ## Deployment
 The application is deployed using separate services:
@@ -292,16 +279,16 @@ This separation allowed me to practice connecting a frontend, backend, database,
 ## Future Improvements
 Potential improvements include:
 
-Improve OCR accuracy for difficult receipts
-Handle OCR service cold starts more gracefully
-Improve mobile authentication/session behavior
-Add stronger transaction validation
-Add additional financial analytics
-Add recurring transactions
-Add export functionality
-Add more visualizations
-Improve accessibility
-Add automated tests
+    - Improve OCR accuracy for difficult receipts
+    - Handle OCR service cold starts more gracefully
+    - Improve mobile authentication/session behavior
+    - Add stronger transaction validation
+    - Add additional financial analytics
+    - Add recurring transactions
+    - Add export functionality
+    - Add more visualizations
+    - Improve accessibility
+    - Add automated tests
 
 ## Project Status
 
