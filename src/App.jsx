@@ -12,7 +12,6 @@ import ReceiptPage from './pages/ReceiptPage'
 import BudgetsPage from './pages/BudgetsPage'
 
 function App() {
-  console.log("App loaded")
   const [transactions, setTransactions] = useState([])
   const [filter, setFilter] = useState("all")
   const [search, setSearch] = useState("")
@@ -37,7 +36,6 @@ function App() {
         return response.json()
       })
       .then((data) => {
-        console.log("USER:", data)
         setUser(data)
       })
       .catch(() => {
@@ -48,14 +46,11 @@ function App() {
   // GET request
   // do this when component loads or renders
   useEffect(() => {
-    console.log("TRANSACTION EFFECT STARTED, USER:", user)
     if (!user) {
       setLoading(false)
       return
     }
     setError("")
-
-    console.log("FETCHING TRANSACTIONS FROM:", `${API_URL}/api/transactions`)
 
     //make http requests
     fetch(`${API_URL}/api/transactions`, {
@@ -63,7 +58,6 @@ function App() {
     })
       // response.json() - React turn that response to JavaScript data
       .then((response) => {
-        console.log("TRANSACTION RESPONSE:", response.status)
         // error handling
         if (!response.ok) {
           throw new Error("Failed to load transactions")
@@ -71,7 +65,6 @@ function App() {
         return response.json()
       })
       .then((data) => {
-        console.log("TRANSACTION DATA:", data)
         setTransactions(data)
       })
       .catch((error) => {
@@ -94,11 +87,9 @@ function App() {
       credentials: "include"
     })
       .then((response) => {
-        console.log("BUDGET STATUS:", response.status)
         return response.json()
       })
       .then((data) => {
-        console.log("BUDGET DATA:", data)
         setBudgets(data)
       })
   }, [user])
@@ -181,7 +172,6 @@ function App() {
 
 
   function handleEdit(transaction) {
-    console.log("Editing:", transaction.id)
     setEditingId(transaction.id)
   }
 

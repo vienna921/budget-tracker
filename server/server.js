@@ -25,8 +25,6 @@ const FormData = require("form-data")
 
 const app = express()
 
-console.log("CORS URL:", "https://budget-tracker-ht4coicv7-viennatan21-8087s-projects.vercel.app")
-
 app.use(cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true
@@ -599,7 +597,6 @@ app.patch("/api/budgets/:id", async (req, res) => {
 
 app.post("/api/scan-receipt", upload.single("receipt"), async (req, res) => {
     try {
-        console.log("RECEIVED FILE:", req.file)
 
         // create form that holds a file
         const formData = new FormData()

@@ -44,7 +44,6 @@ function BudgetForm({ onBudgetAdded }) {
                 return data
             })
             .then((data) => {
-                console.log(data)
 
                 onBudgetAdded(data)
 
