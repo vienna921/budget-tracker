@@ -132,45 +132,7 @@ def ocr():
 
 @app.route("/")
 def home():
-    image = cv2.imread("receipt-wholefoods.jpg")
-    height, width = image.shape[:2]
-
-    new_width = width * 2
-    new_height = height * 2
-
-    resized_image = cv2.resize(
-        image,
-        (new_width, new_height)
-    )
-
-    gray_image = cv2.cvtColor(
-        resized_image,
-        cv2.COLOR_BGR2GRAY
-    )
-
-    threshold_image = cv2.threshold(
-        gray_image,
-        0,
-        255,
-        cv2.THRESH_BINARY + cv2.THRESH_OTSU
-    )[1]
-
-    text = pytesseract.image_to_string(
-        threshold_image,
-        config="--psm 6"
-    )
-
-    amount = extract_amount(text)
-    date = extract_date(text)
-    merchant = extract_merchant(text)
-
-    receipt_data = {
-        "merchant": merchant,
-        "amount": amount,
-        "date": date
-    }
-
-    return jsonify(receipt_data)
+    return "OCR service is running!"
 
 if __name__ == "__main__":
     import os
