@@ -40,7 +40,7 @@ A full-stack personal finance application for tracking income, expenses, budgets
     │ Express REST API    │
     └───────┬─────┬───────┘
             |     │
- PostgreSQL │     │ OCR
+            │     │ 
             │     │
             ▼     ▼
    ┌──────────┐ ┌──────────────┐
