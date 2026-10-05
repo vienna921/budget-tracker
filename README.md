@@ -28,6 +28,7 @@ A full-stack personal finance application for tracking income, expenses, budgets
 * Neon
 
 # Architecture
+```
     ┌─────────────────────┐
     │      Vercel         │
     │   React + Vite      │
@@ -40,7 +41,7 @@ A full-stack personal finance application for tracking income, expenses, budgets
     │ Express REST API    │
     └───────┬─────┬───────┘
             |     │
-            │     │ 
+ PostgreSQL │     │ OCR
             │     │
             ▼     ▼
    ┌──────────┐ ┌──────────────┐
@@ -48,6 +49,7 @@ A full-stack personal finance application for tracking income, expenses, budgets
    │PostgreSQL│ │ Python OCR   │
    └──────────┘ │ Tesseract    │
                 └──────────────┘
+```
 
 # Features
 ## Authentication
